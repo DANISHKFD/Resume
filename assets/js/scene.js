@@ -176,6 +176,69 @@
   renderer.domElement.addEventListener('click', onPointerClick);
   renderer.domElement.addEventListener('touchend', onPointerClick);
 
+  var lampOn = true;
+
+  function buildLamp() {
+    var group = new THREE.Group();
+    group.position.set(2.1, -0.15, 1.2);
+
+    var baseMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.5, metalness: 0.6 });
+    var base = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.1, 24), baseMat);
+    group.add(base);
+
+    var poleMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.4, metalness: 0.7 });
+    var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.4, 12), poleMat);
+    pole.position.set(0, 1.75, 0);
+    group.add(pole);
+
+    var armPivot = new THREE.Group();
+    armPivot.position.set(0, 3.4, 0);
+    group.add(armPivot);
+    var arm = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.4, 12), poleMat);
+    arm.rotation.z = Math.PI / 2.6;
+    arm.position.set(0.55, 0.28, 0);
+    armPivot.add(arm);
+
+    lampBulbMat = new THREE.MeshStandardMaterial({
+      color: 0x111111, emissive: THEMES[currentTheme].lampColor, emissiveIntensity: lampOn ? 1.4 : 0
+    });
+    var head = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.5, 20, 1, true), lampBulbMat);
+    head.rotation.x = Math.PI;
+    head.position.set(1.05, 0.5, 0);
+    armPivot.add(head);
+
+    deskGroup.add(group);
+    lampLight.position.copy(head.getWorldPosition(new THREE.Vector3()));
+
+    registerInteractive(group, group, {
+      onClick: function () { toggleLamp(); },
+      onHoverIn: function () { document.body.style.cursor = 'pointer'; },
+      onHoverOut: function () { }
+    });
+
+    return group;
+  }
+
+  function toggleLamp() {
+    lampOn = !lampOn;
+    var theme = THEMES[currentTheme];
+    var targetLightIntensity = lampOn ? theme.lampIntensity : 0;
+    var targetAmbient = lampOn ? theme.ambientIntensity : theme.ambientIntensity * 0.35;
+    var targetEmissive = lampOn ? 1.4 : 0;
+
+    if (reduceMotion) {
+      lampLight.intensity = targetLightIntensity;
+      ambientLight.intensity = targetAmbient;
+      lampBulbMat.emissiveIntensity = targetEmissive;
+      return;
+    }
+    gsap.to(lampLight, { intensity: targetLightIntensity, duration: 0.5, ease: 'power2.out' });
+    gsap.to(ambientLight, { intensity: targetAmbient, duration: 0.5, ease: 'power2.out' });
+    gsap.to(lampBulbMat, { emissiveIntensity: targetEmissive, duration: 0.5, ease: 'power2.out' });
+  }
+
+  buildLamp();
+
   // Exposed for later tasks in this file (object factories, raycasting, theme toggle)
   // via closure — subsequent tasks append to this same IIFE rather than creating new globals.
   window.__resumeScene = {
