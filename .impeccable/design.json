@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-28T00:00:00.000Z",
+  "title": "Design System: Danish Ahmed N F — Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Schematic Graphite",
+        "canonical": "#0B0E14",
+        "tonalRamp": ["#05060A", "#0B0E14", "#10141C", "#171D28", "#232B3A", "#3A4456", "#5C687C", "#8A93A3"]
+      },
+      "bg-raised": {
+        "role": "neutral",
+        "displayName": "Panel Graphite",
+        "canonical": "#10141C",
+        "tonalRamp": ["#05060A", "#0B0E14", "#10141C", "#171D28", "#232B3A", "#3A4456", "#5C687C", "#8A93A3"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Signal White",
+        "canonical": "#E7ECF3",
+        "tonalRamp": ["#5C687C", "#8A93A3", "#B0B8C4", "#CBD1DA", "#E7ECF3", "#EEF1F6", "#F5F7FA", "#FBFCFD"]
+      },
+      "ink-dim": {
+        "role": "neutral",
+        "displayName": "Steel Dim",
+        "canonical": "#7C8798",
+        "tonalRamp": ["#232B3A", "#3A4456", "#4E596B", "#647085", "#7C8798", "#98A1AF", "#B7BEC9", "#D7DBE2"]
+      },
+      "spine": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "canonical": "#232B3A",
+        "tonalRamp": ["#0B0E14", "#10141C", "#171D28", "#232B3A", "#3A4456", "#5C687C", "#8A93A3", "#B0B8C4"]
+      },
+      "line-programming": {
+        "role": "primary",
+        "displayName": "Programming Line — Signal Amber",
+        "canonical": "#F2A93B",
+        "tonalRamp": ["#3D2A0A", "#654510", "#8F5F17", "#BA7E22", "#F2A93B", "#F6BE68", "#FAD394", "#FDE9C4"]
+      },
+      "line-web": {
+        "role": "primary",
+        "displayName": "Web & Backend Line — Signal Blue",
+        "canonical": "#3FA7FF",
+        "tonalRamp": ["#0A2A45", "#114270", "#185C99", "#2380C4", "#3FA7FF", "#6FBEFF", "#9FD4FF", "#CFEAFF"]
+      },
+      "line-data": {
+        "role": "secondary",
+        "displayName": "Data & ML Line — Signal Violet",
+        "canonical": "#C05CFF",
+        "tonalRamp": ["#341047", "#521A70", "#71259A", "#9C3ED0", "#C05CFF", "#D086FF", "#E0AEFF", "#F0D6FF"]
+      },
+      "line-tools": {
+        "role": "secondary",
+        "displayName": "Databases & Tools Line — Signal Teal",
+        "canonical": "#33D6A6",
+        "tonalRamp": ["#0C3B2D", "#125C46", "#187E5F", "#25AC81", "#33D6A6", "#63E2BE", "#93EDD6", "#C6F7E9"]
+      }
+    },
+    "typographyMeta": {
+      "hero": { "displayName": "Hero", "purpose": "Route console headline only, one instance per page." },
+      "section-title": { "displayName": "Section Title", "purpose": "One per station/section, set beside its station node." },
+      "station-title": { "displayName": "Station Title", "purpose": "Individual entries within a section: a project, a role, a degree." },
+      "body": { "displayName": "Body", "purpose": "All prose, ~72ch max measure." },
+      "readout": { "displayName": "Readout", "purpose": "Every non-prose data token: tags, dates, stats, the console route input, nav micro-labels. Always Overpass Mono." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "signal-scroll", "value": "GSAP ScrollTrigger, scrub:true", "purpose": "Binds the traveling signal dot's position on the spine to overall scroll progress — the page's one authored through-line motion." },
+      { "name": "spine-draw", "value": "stroke-dashoffset scrubbed by ScrollTrigger", "purpose": "Per-section spine segment draws in as its station enters view." },
+      { "name": "station-entrance", "value": "translateX from spine side, power3.out, 0.8s (GSAP)", "purpose": "Section content entrance — reads as emerging from the line, distinct from the ledger system's translateY reveal. Respects prefers-reduced-motion." },
+      { "name": "signal-glow-pulse", "value": "opacity/blur pulse, 2.4s ease-in-out infinite", "purpose": "Ambient pulse on the hero's 'in service' status dot and the traveling signal — the only elements permitted the Glow-Is-Lit treatment." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "800px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Station Node (simple)",
+      "kind": "custom",
+      "refersTo": "station-node",
+      "description": "The circle marking a section's position on the spine. Rail-bordered at rest; glows Signal Blue when its section is the one currently nearest the traveling signal.",
+      "html": "<div class=\"ds-station\" aria-hidden=\"true\"></div>",
+      "css": ".ds-station{ width:18px; height:18px; border-radius:50%; background:#0B0E14; border:2px solid #232B3A; transition:border-color .3s ease, box-shadow .3s ease; } .ds-station.is-active{ border-color:#3FA7FF; box-shadow:0 0 12px 2px rgba(63,167,255,0.55); }"
+    },
+    {
+      "name": "Interchange Ring (project station)",
+      "kind": "custom",
+      "refersTo": "interchange-ring",
+      "description": "A project's station ring: a conic-gradient wedge per skill line its real tags touch. A single-line project renders as one solid color, never a gradient.",
+      "html": "<div class=\"ds-interchange\" style=\"--seg: conic-gradient(from 0deg, #3FA7FF 0 50%, #33D6A6 50% 100%);\" aria-hidden=\"true\"></div>",
+      "css": ".ds-interchange{ width:26px; height:26px; border-radius:50%; background:var(--seg); border:2px solid #0B0E14; outline:1px solid #232B3A; }"
+    },
+    {
+      "name": "Signal Dot",
+      "kind": "custom",
+      "refersTo": "signal-dot",
+      "description": "The single traveling marker riding the spine, position bound to scroll progress. The page's signature motion element.",
+      "html": "<div class=\"ds-signal\" aria-hidden=\"true\"></div>",
+      "css": ".ds-signal{ width:10px; height:10px; border-radius:50%; background:#3FA7FF; box-shadow:0 0 10px 3px rgba(63,167,255,0.65), 0 0 24px 8px rgba(63,167,255,0.25); }"
+    },
+    {
+      "name": "Line Chip",
+      "kind": "chip",
+      "refersTo": "line-chip",
+      "description": "Hero console control representing one of the four skill lines; square, colored border and text in that line's color.",
+      "html": "<button class=\"ds-line-chip\" style=\"--line:#3FA7FF;\">Web &amp; Backend</button>",
+      "css": ".ds-line-chip{ font-family:'Overpass Mono',monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--line); background:transparent; border:1px solid var(--line); padding:10px 16px; border-radius:0; cursor:pointer; transition:background .25s ease, color .25s ease; } .ds-line-chip:hover, .ds-line-chip:focus-visible{ background:var(--line); color:#0B0E14; }"
+    },
+    {
+      "name": "Readout Tag",
+      "kind": "chip",
+      "refersTo": "readout-tag",
+      "description": "Tech-stack tag list under a project title. Square, mono, Steel Dim.",
+      "html": "<span class=\"ds-readout\">React · Flask · PostgreSQL</span>",
+      "css": ".ds-readout{ font-family:'Overpass Mono',monospace; font-size:11.5px; letter-spacing:0.04em; color:#7C8798; }"
+    },
+    {
+      "name": "Station Row (project)",
+      "kind": "custom",
+      "refersTo": "station-row",
+      "description": "The dominant repeating unit: an interchange ring beside a project title, description, tags, and live link.",
+      "html": "<div class=\"ds-station-row\"><div class=\"ds-interchange\" style=\"--seg:conic-gradient(from 0deg,#3FA7FF 0 33%,#33D6A6 33% 66%,#F2A93B 66% 100%);\"></div><div><h3 class=\"ds-station-title\">Project Title</h3><p class=\"ds-body\">Short description of the project, its stack, and its real data source.</p><span class=\"ds-readout\">React · Flask · PostgreSQL · Docker</span></div></div>",
+      "css": ".ds-station-row{ display:grid; grid-template-columns:26px 1fr; gap:24px; padding:32px 0; align-items:start; } .ds-station-title{ font-family:'Overpass',sans-serif; font-weight:700; font-size:22px; color:#E7ECF3; margin:0 0 8px; } .ds-body{ font-family:'Overpass',sans-serif; font-weight:400; color:#7C8798; font-size:15px; line-height:1.7; margin:0 0 10px; }"
+    },
+    {
+      "name": "Route Console Input",
+      "kind": "input",
+      "refersTo": "route-input",
+      "description": "The hero's journey-planner-style destination control.",
+      "html": "<div class=\"ds-console\"><span class=\"ds-console-label\">Plan your route →</span></div>",
+      "css": ".ds-console{ background:#10141C; border:1px solid #232B3A; padding:14px 18px; font-family:'Overpass Mono',monospace; font-size:13px; color:#7C8798; } .ds-console:focus-within{ border-color:#3FA7FF; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Data Line",
+    "overview": "The site is staged as a transit/circuit schematic: a signal-lit spine runs the length of the page, and every section is a station on it. Each of the four real skill categories (Programming, Web & Backend, Data & ML, Databases & Tools) is a named, colored line; projects are interchange stations — their station ring is a conic-gradient wedge of every line whose tech actually appears in that project's real tag list, so \"breadth across full-stack and data/ML\" (the product's core positioning claim) is drawn as literal infrastructure instead of asserted in a sentence. The hero is a route console the visitor operates — pick a destination, the signal travels the spine to it as the page scrolls. Nothing here is decorative cartography: every line a project touches, every interchange size, is derived from that project's real stack.\n\nThis replaced the Passbook ledger direction. Where the Passbook proved verified data, the Data Line proves versatility — the other half of the product's positioning — through dev/data-culture's own diagram language (DAGs, schematics) fused with transit-map convention.",
+    "keyCharacteristics": [
+      "One continuous schematic spine carries a station marker per section; project stations get a multi-color interchange ring sized to how many lines actually converge there.",
+      "A single traveling signal dot rides the spine, position bound to scroll progress — the one authored through-line motion.",
+      "One typeface family (Overpass) does every display and body job; Overpass Mono is reserved for readouts only.",
+      "Circles are reserved exclusively for stations — nothing else is ever round.",
+      "Glow is reserved for things genuinely lit in the source material — never a decorative halo on resting content."
+    ],
+    "rules": [
+      { "name": "The Truth-Mapped Line Rule", "body": "A line color may only appear next to content that genuinely belongs to that skill category. Interchange-ring segments are generated from a project's real work-tags, never hand-picked for balance or color variety.", "section": "colors" },
+      { "name": "The Glow-Is-Lit Rule", "body": "Glow is reserved for things actually lit in the schematic world: the traveling signal dot, the active line, live/status indicators. It never appears on cards, text, or resting UI as generic polish.", "section": "elevation" },
+      { "name": "One Signage Face Rule", "body": "Overpass carries every heading and every prose sentence; Overpass Mono carries every non-prose data token. No third typeface is introduced for personality.", "section": "typography" },
+      { "name": "The Circle-Is-A-Station Rule", "body": "A circle means this is a stop on the line. If a circle appears anywhere that isn't a station node or the signal dot, the shape language has broken.", "section": "shapes" },
+      { "name": "Line-Not-Shadow Rule", "body": "Depth and hierarchy come from line weight, color, and glow-when-lit — never from a drop shadow. A schematic doesn't cast shadows; it lights up.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do derive every interchange ring from the entry's real tags — the Truth-Mapped Line Rule.",
+      "Do keep glow reserved for genuinely lit elements — the Glow-Is-Lit Rule.",
+      "Do keep circles exclusive to stations — the Circle-Is-A-Station Rule.",
+      "Do run Overpass across every heading and body role, Overpass Mono across every data token — One Signage Face Rule.",
+      "Do keep the spine present and structurally identical on every section."
+    ],
+    "donts": [
+      "Don't hand-pick interchange-ring colors for visual balance — they are computed from real tags only.",
+      "Don't add a drop shadow anywhere; depth is line weight and glow only.",
+      "Don't round a corner on anything that isn't a station or the signal dot.",
+      "Don't introduce a third typeface.",
+      "Don't let the console's destination buttons be decorative — every one must actually navigate."
+    ]
+  }
+}
