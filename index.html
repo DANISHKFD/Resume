@@ -94,6 +94,17 @@
     var open = nav.classList.toggle('is-open');
     this.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
+
+  document.getElementById('theme-toggle').addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'desk-lamp';
+    var next = current === 'cyberpunk' ? 'desk-lamp' : 'cyberpunk';
+    if (window.__resumeScene && window.__resumeScene.setTheme) {
+      window.__resumeScene.setTheme(next);
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+      window.localStorage.setItem('resumeTheme', next);
+    }
+  });
 </script>
 
 </body>

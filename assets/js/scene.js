@@ -655,4 +655,35 @@
     reduceMotion: reduceMotion,
     interactives: interactives
   };
+
+  function applyThemeToScene(name) {
+    var theme = THEMES[name];
+    currentTheme = name;
+    scene.background.set(theme.bgColor);
+    deskGroup.children[0].material.color.set(theme.deskColor); // desk slab is always child 0
+    lampLight.color.set(theme.lampColor);
+    lampLight.intensity = lampOn ? theme.lampIntensity : 0;
+    ambientLight.color.set(theme.ambientColor);
+    ambientLight.intensity = lampOn ? theme.ambientIntensity : theme.ambientIntensity * 0.35;
+    if (lampBulbMat) lampBulbMat.emissive.set(theme.lampColor);
+  }
+
+  function setTheme(name) {
+    if (!THEMES[name]) name = 'desk-lamp';
+    document.documentElement.setAttribute('data-theme', name);
+    window.localStorage.setItem('resumeTheme', name);
+    applyThemeToScene(name);
+
+    var toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) toggleBtn.setAttribute('aria-pressed', name === 'cyberpunk' ? 'true' : 'false');
+
+    var headline = document.querySelector('.hero-overlay h1');
+    if (headline && !reduceMotion) {
+      headline.classList.remove('theme-glitching');
+      void headline.offsetWidth; // restart animation
+      headline.classList.add('theme-glitching');
+    }
+  }
+
+  window.__resumeScene.setTheme = setTheme;
 })();
