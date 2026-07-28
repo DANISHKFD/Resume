@@ -1360,7 +1360,7 @@ git commit -m "Add Cyberpunk theme toggle: scene recolor, persistence, glitch fl
 }
 
 .panel-close{
-  position:fixed; top:20px; right:20px; z-index:210;
+  position:fixed; top:20px; left:20px; z-index:210;
   width:44px; height:44px; border-radius:50%;
   border:1px solid var(--rail); background:var(--bg-raised); color:var(--ink);
   font-size:18px; line-height:1;
