@@ -50,6 +50,7 @@
   var currentTheme = document.documentElement.getAttribute('data-theme') || 'desk-lamp';
 
   var scene, camera, renderer, deskGroup, lampLight, ambientLight, lampBulbMat;
+  var basecameraPos, targetParallax, currentParallax; // initialized in initScene() to ensure defined before animate()
   var clock = new THREE.Clock();
   var interactives = []; // populated by later tasks: meshes with userData.interactive = true
 
@@ -98,6 +99,18 @@
     deskGroup.add(desk);
 
     window.addEventListener('resize', onResize);
+
+    // Initialize parallax state — must be here, before animate() is first called.
+    basecameraPos = camera.position.clone();
+    targetParallax = { x: 0, y: 0 };
+    currentParallax = { x: 0, y: 0 };
+
+    if (!reduceMotion) {
+      window.addEventListener('mousemove', function (evt) {
+        targetParallax.x = (evt.clientX / window.innerWidth - 0.5) * 0.6;
+        targetParallax.y = (evt.clientY / window.innerHeight - 0.5) * 0.3;
+      });
+    }
   }
 
   function onResize() {
@@ -105,17 +118,6 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-
-  var basecameraPos = camera.position.clone();
-  var targetParallax = { x: 0, y: 0 };
-  var currentParallax = { x: 0, y: 0 };
-
-  if (!reduceMotion) {
-    window.addEventListener('mousemove', function (evt) {
-      targetParallax.x = (evt.clientX / window.innerWidth - 0.5) * 0.6;
-      targetParallax.y = (evt.clientY / window.innerHeight - 0.5) * 0.3;
-    });
   }
 
   function updateParallax() {
