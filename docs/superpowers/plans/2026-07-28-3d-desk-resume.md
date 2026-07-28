@@ -1100,6 +1100,7 @@ git commit -m "Add laptop object: opens and navigates to projects.html"
       if (clicked) return;
       clicked = true;
       if (reduceMotion) {
+        group.rotation.x = idleRotX + 0.3;
         navigateAfter('gallery.html', 0);
         return;
       }
