@@ -176,6 +176,16 @@
   renderer.domElement.addEventListener('click', onPointerClick);
   renderer.domElement.addEventListener('touchend', onPointerClick);
 
+  function navigateAfter(href, delayMs) {
+    if (reduceMotion) {
+      window.location.href = href;
+      return;
+    }
+    window.setTimeout(function () {
+      window.location.href = href;
+    }, delayMs);
+  }
+
   var lampOn = true;
 
   function buildLamp() {
@@ -347,9 +357,58 @@
     return group;
   }
 
+  function buildLaptop() {
+    var group = new THREE.Group();
+    group.position.set(0, -0.15, -0.4);
+    var opened = false;
+
+    var baseMat = new THREE.MeshStandardMaterial({ color: 0x4a4d52, roughness: 0.4, metalness: 0.5 });
+    var base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 1.0), baseMat);
+    base.position.y = 0.03;
+    group.add(base);
+
+    var hinge = new THREE.Group();
+    hinge.position.set(0, 0.06, -0.48);
+    group.add(hinge);
+
+    var screenMat = new THREE.MeshStandardMaterial({ color: 0x3a3d42, roughness: 0.4, metalness: 0.5 });
+    var screen = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 0.05), screenMat);
+    screen.position.set(0, 0.48, -0.025);
+    hinge.add(screen);
+
+    var glowMat = new THREE.MeshStandardMaterial({
+      color: 0x0a1622, emissive: 0x3fa7ff, emissiveIntensity: 0.0
+    });
+    var glow = new THREE.Mesh(new THREE.PlaneGeometry(1.32, 0.78), glowMat);
+    glow.position.set(0, 0.48, 0.005);
+    hinge.add(glow);
+
+    hinge.rotation.x = -0.35; // mostly-closed idle state
+
+    deskGroup.add(group);
+
+    function openAndGo() {
+      if (opened) return;
+      opened = true;
+      if (reduceMotion) {
+        hinge.rotation.x = -1.75;
+        glowMat.emissiveIntensity = 1;
+        navigateAfter('projects.html', 0);
+        return;
+      }
+      gsap.to(hinge.rotation, { x: -1.75, duration: 0.55, ease: 'power2.out' });
+      gsap.to(glowMat, { emissiveIntensity: 1, duration: 0.4, delay: 0.15 });
+      navigateAfter('projects.html', 650);
+    }
+
+    registerInteractive(group, group, { onClick: openAndGo });
+    return group;
+  }
+
   buildPlant();
   buildDuck();
   buildPen();
+  buildLaptop();
 
   // Exposed for later tasks in this file (object factories, raycasting, theme toggle)
   // via closure — subsequent tasks append to this same IIFE rather than creating new globals.
