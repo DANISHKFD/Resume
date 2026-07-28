@@ -107,8 +107,29 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  var basecameraPos = camera.position.clone();
+  var targetParallax = { x: 0, y: 0 };
+  var currentParallax = { x: 0, y: 0 };
+
+  if (!reduceMotion) {
+    window.addEventListener('mousemove', function (evt) {
+      targetParallax.x = (evt.clientX / window.innerWidth - 0.5) * 0.6;
+      targetParallax.y = (evt.clientY / window.innerHeight - 0.5) * 0.3;
+    });
+  }
+
+  function updateParallax() {
+    if (reduceMotion) return;
+    currentParallax.x += (targetParallax.x - currentParallax.x) * 0.04;
+    currentParallax.y += (targetParallax.y - currentParallax.y) * 0.04;
+    camera.position.x = basecameraPos.x + currentParallax.x;
+    camera.position.y = basecameraPos.y - currentParallax.y;
+    camera.lookAt(0, 1, 0);
+  }
+
   function animate() {
     requestAnimationFrame(animate);
+    updateParallax();
     renderer.render(scene, camera);
   }
 
