@@ -337,7 +337,7 @@
         fallen = true;
         if (reduceMotion) {
           group.position.set(3.6, -1.6, -1.6);
-          group.rotation.set(0.4, 0, 1.4);
+          group.rotation.set(2.2, 1.1, 3.4);
           return;
         }
         gsap.to(group.position, { x: 3.6, y: -1.6, z: -1.6, duration: 0.7, ease: 'power2.in' });
