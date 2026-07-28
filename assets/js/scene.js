@@ -47,7 +47,8 @@
     }
   };
 
-  var storedTheme = window.localStorage.getItem('resumeTheme');
+  var storedTheme = null;
+  try { storedTheme = window.localStorage.getItem('resumeTheme'); } catch (e) { storedTheme = null; }
   var currentTheme = (storedTheme === 'cyberpunk' || storedTheme === 'desk-lamp')
     ? storedTheme
     : (document.documentElement.getAttribute('data-theme') || 'desk-lamp');
