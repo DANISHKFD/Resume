@@ -112,6 +112,70 @@
     renderer.render(scene, camera);
   }
 
+  var raycaster = new THREE.Raycaster();
+  var pointer = new THREE.Vector2();
+  var hoveredRoot = null;
+
+  function registerInteractive(rootGroup, hitMesh, handlers) {
+    rootGroup.userData.interactive = true;
+    rootGroup.userData.handlers = handlers || {};
+    interactives.push(hitMesh);
+  }
+
+  function findInteractiveAncestor(obj) {
+    var o = obj;
+    while (o) {
+      if (o.userData && o.userData.interactive) return o;
+      o = o.parent;
+    }
+    return null;
+  }
+
+  function updatePointer(evt) {
+    var rect = renderer.domElement.getBoundingClientRect();
+    var clientX = evt.clientX;
+    var clientY = evt.clientY;
+    if (evt.changedTouches && evt.changedTouches.length) {
+      clientX = evt.changedTouches[0].clientX;
+      clientY = evt.changedTouches[0].clientY;
+    }
+    pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  }
+
+  function onPointerMove(evt) {
+    updatePointer(evt);
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(interactives, true);
+    var root = hits.length ? findInteractiveAncestor(hits[0].object) : null;
+
+    if (root !== hoveredRoot) {
+      if (hoveredRoot && hoveredRoot.userData.handlers.onHoverOut) {
+        hoveredRoot.userData.handlers.onHoverOut();
+      }
+      if (root && root.userData.handlers.onHoverIn) {
+        root.userData.handlers.onHoverIn();
+      }
+      hoveredRoot = root;
+      document.body.style.cursor = root ? 'pointer' : 'default';
+    }
+  }
+
+  function onPointerClick(evt) {
+    updatePointer(evt);
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(interactives, true);
+    if (!hits.length) return;
+    var root = findInteractiveAncestor(hits[0].object);
+    if (root && root.userData.handlers.onClick) {
+      root.userData.handlers.onClick();
+    }
+  }
+
+  renderer.domElement.addEventListener('mousemove', onPointerMove);
+  renderer.domElement.addEventListener('click', onPointerClick);
+  renderer.domElement.addEventListener('touchend', onPointerClick);
+
   // Exposed for later tasks in this file (object factories, raycasting, theme toggle)
   // via closure — subsequent tasks append to this same IIFE rather than creating new globals.
   window.__resumeScene = {
