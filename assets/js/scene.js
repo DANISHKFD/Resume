@@ -405,10 +405,219 @@
     return group;
   }
 
+  function buildNotebook() {
+    var group = new THREE.Group();
+    group.position.set(1.1, -0.15, 1.4);
+    var opened = false;
+
+    var coverMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.7 });
+    var coverPivot = new THREE.Group();
+    var cover = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.04, 1.0), coverMat);
+    cover.position.set(0.375, 0, 0);
+    coverPivot.add(cover);
+    group.add(coverPivot);
+
+    var pageMat = new THREE.MeshStandardMaterial({ color: 0xEFEAE0, roughness: 0.9 });
+    var pages = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.03, 1.0), pageMat);
+    pages.position.set(0, 0.005, 0);
+    group.add(pages);
+
+    deskGroup.add(group);
+
+    function openAndGo() {
+      if (opened) return;
+      opened = true;
+      if (reduceMotion) {
+        coverPivot.rotation.z = Math.PI * 0.85;
+        navigateAfter('education.html', 0);
+        return;
+      }
+      gsap.to(coverPivot.rotation, { z: Math.PI * 0.85, duration: 0.5, ease: 'power2.out' });
+      navigateAfter('education.html', 600);
+    }
+
+    registerInteractive(group, group, { onClick: openAndGo });
+    return group;
+  }
+
+  function buildMug() {
+    var group = new THREE.Group();
+    group.position.set(-0.9, -0.15, 1.5);
+    var clicked = false;
+
+    var mugMat = new THREE.MeshStandardMaterial({ color: 0xe7e2d8, roughness: 0.5 });
+    var cup = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.19, 0.4, 20), mugMat);
+    cup.position.y = 0.2;
+    group.add(cup);
+
+    var handle = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 8, 20, Math.PI), mugMat);
+    handle.rotation.z = Math.PI / 2;
+    handle.position.set(0.24, 0.2, 0);
+    group.add(handle);
+
+    var steamGroup = new THREE.Group();
+    steamGroup.position.set(0, 0.42, 0);
+    group.add(steamGroup);
+    var steamMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
+    var steamPuffs = [];
+    for (var i = 0; i < 3; i++) {
+      var puff = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), steamMat.clone());
+      puff.position.set((i - 1) * 0.05, 0, 0);
+      steamGroup.add(puff);
+      steamPuffs.push(puff);
+    }
+
+    deskGroup.add(group);
+
+    function rippleAndGo() {
+      if (clicked) return;
+      clicked = true;
+      if (reduceMotion) {
+        navigateAfter('contact.html', 0);
+        return;
+      }
+      steamPuffs.forEach(function (puff, i) {
+        gsap.to(puff.position, { y: 0.5, duration: 0.8, delay: i * 0.08, ease: 'power1.out' });
+        gsap.to(puff.material, { opacity: 0.5, duration: 0.2, delay: i * 0.08 })
+          .then(function () { gsap.to(puff.material, { opacity: 0, duration: 0.5 }); });
+      });
+      navigateAfter('contact.html', 550);
+    }
+
+    registerInteractive(group, group, { onClick: rippleAndGo });
+    return group;
+  }
+
+  function buildTrophy() {
+    var group = new THREE.Group();
+    group.position.set(-2.6, -0.15, -1.1);
+    var clicked = false;
+
+    var goldMat = new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.3, metalness: 0.85 });
+    var base = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.12, 16), goldMat);
+    base.position.y = 0.06;
+    group.add(base);
+
+    var stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.3, 12), goldMat);
+    stem.position.y = 0.27;
+    group.add(stem);
+
+    var cup = new THREE.Mesh(new THREE.SphereGeometry(0.24, 20, 16, 0, Math.PI * 2, 0, Math.PI * 0.65), goldMat);
+    cup.position.y = 0.55;
+    group.add(cup);
+
+    [1, -1].forEach(function (s) {
+      var handle = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 8, 16, Math.PI), goldMat);
+      handle.rotation.y = Math.PI / 2;
+      handle.rotation.z = Math.PI / 2 * s;
+      handle.position.set(0.22 * s, 0.55, 0);
+      group.add(handle);
+    });
+
+    deskGroup.add(group);
+
+    function glintAndGo() {
+      if (clicked) return;
+      clicked = true;
+      if (reduceMotion) {
+        navigateAfter('accomplishments.html', 0);
+        return;
+      }
+      gsap.to(goldMat, { emissive: new THREE.Color(0xffe9a8), emissiveIntensity: 0.8, duration: 0.25, yoyo: true, repeat: 3 });
+      navigateAfter('accomplishments.html', 550);
+    }
+
+    registerInteractive(group, group, { onClick: glintAndGo });
+    return group;
+  }
+
+  function buildFrame() {
+    var group = new THREE.Group();
+    group.position.set(-3.6, 0.75, -1.9);
+    group.rotation.x = -0.08;
+    var clicked = false;
+
+    var frameMat = new THREE.MeshStandardMaterial({ color: 0x3a2a20, roughness: 0.6 });
+    var frame = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.06), frameMat);
+    group.add(frame);
+
+    var photoMat = new THREE.MeshStandardMaterial({ color: 0x6ea8ae, roughness: 0.5 });
+    var photo = new THREE.Mesh(new THREE.PlaneGeometry(0.74, 0.54), photoMat);
+    photo.position.z = 0.035;
+    group.add(photo);
+
+    deskGroup.add(group);
+
+    var idleRotX = group.rotation.x;
+
+    function tiltAndGo() {
+      if (clicked) return;
+      clicked = true;
+      if (reduceMotion) {
+        group.rotation.x = idleRotX + 0.3;
+        navigateAfter('gallery.html', 0);
+        return;
+      }
+      gsap.to(group.rotation, { x: idleRotX + 0.3, duration: 0.4, ease: 'power2.out' });
+      navigateAfter('gallery.html', 500);
+    }
+
+    registerInteractive(group, group, { onClick: tiltAndGo });
+    return group;
+  }
+
+  function buildFigurine() {
+    var group = new THREE.Group();
+    group.position.set(2.6, -0.15, -1.6);
+    var clicked = false;
+
+    var mat = new THREE.MeshStandardMaterial({ color: 0x6ea8ae, roughness: 0.6 });
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), mat);
+    head.position.y = 0.42;
+    group.add(head);
+
+    var body = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.28, 10), mat);
+    body.position.y = 0.24;
+    group.add(body);
+
+    [[-1, 0.08], [1, 0.08]].forEach(function (pair) {
+      var arm = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.22, 8), mat);
+      arm.position.set(pair[0] * pair[1] * 1.4, 0.28, 0);
+      arm.rotation.z = pair[0] * 0.5;
+      group.add(arm);
+    });
+    [[-1], [1]].forEach(function (pair) {
+      var leg = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.22, 8), mat);
+      leg.position.set(pair[0] * 0.04, 0.05, 0);
+      group.add(leg);
+    });
+
+    deskGroup.add(group);
+
+    function nodAndGo() {
+      if (clicked) return;
+      clicked = true;
+      if (reduceMotion) {
+        navigateAfter('about.html', 0);
+        return;
+      }
+      gsap.to(group.rotation, { z: 0.25, duration: 0.15, yoyo: true, repeat: 3, ease: 'sine.inOut' });
+      navigateAfter('about.html', 550);
+    }
+
+    registerInteractive(group, group, { onClick: nodAndGo });
+    return group;
+  }
+
   buildPlant();
   buildDuck();
   buildPen();
   buildLaptop();
+  buildNotebook();
+  buildMug();
+  buildTrophy();
+  buildFrame();
+  buildFigurine();
 
   // Exposed for later tasks in this file (object factories, raycasting, theme toggle)
   // via closure — subsequent tasks append to this same IIFE rather than creating new globals.
