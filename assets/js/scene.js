@@ -47,7 +47,11 @@
     }
   };
 
-  var currentTheme = document.documentElement.getAttribute('data-theme') || 'desk-lamp';
+  var storedTheme = window.localStorage.getItem('resumeTheme');
+  var currentTheme = (storedTheme === 'cyberpunk' || storedTheme === 'desk-lamp')
+    ? storedTheme
+    : (document.documentElement.getAttribute('data-theme') || 'desk-lamp');
+  document.documentElement.setAttribute('data-theme', currentTheme);
 
   var scene, camera, renderer, deskGroup, lampLight, ambientLight, lampBulbMat;
   var basecameraPos, targetParallax, currentParallax; // initialized in initScene() to ensure defined before animate()
