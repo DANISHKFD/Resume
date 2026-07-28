@@ -239,6 +239,118 @@
 
   buildLamp();
 
+  function buildPlant() {
+    var group = new THREE.Group();
+    group.position.set(-3.4, -0.15, 0.6);
+
+    var potMat = new THREE.MeshStandardMaterial({ color: 0x3a2a20, roughness: 0.8 });
+    var pot = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.28, 0.5, 16), potMat);
+    pot.position.y = 0.25;
+    group.add(pot);
+
+    var leafMat = new THREE.MeshStandardMaterial({ color: 0x2f6b3a, roughness: 0.6, side: THREE.DoubleSide });
+    var leaves = new THREE.Group();
+    leaves.position.y = 0.55;
+    for (var i = 0; i < 6; i++) {
+      var leaf = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.9, 6), leafMat);
+      var angle = (i / 6) * Math.PI * 2;
+      leaf.position.set(Math.cos(angle) * 0.12, 0.45, Math.sin(angle) * 0.12);
+      leaf.rotation.z = Math.cos(angle) * 0.35;
+      leaf.rotation.x = Math.sin(angle) * 0.35;
+      leaves.add(leaf);
+    }
+    group.add(leaves);
+    deskGroup.add(group);
+
+    registerInteractive(group, group, {
+      onClick: function () {
+        if (reduceMotion) return;
+        gsap.to(leaves.rotation, {
+          z: leaves.rotation.z + 0.18, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut'
+        });
+      }
+    });
+    return group;
+  }
+
+  function buildDuck() {
+    var group = new THREE.Group();
+    group.position.set(-1.6, -0.15, 1.6);
+
+    var duckMat = new THREE.MeshStandardMaterial({ color: 0xf5c518, roughness: 0.5 });
+    var body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 20, 16), duckMat);
+    body.scale.set(1, 0.85, 1.1);
+    body.position.y = 0.26;
+    group.add(body);
+
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), duckMat);
+    head.position.set(0.2, 0.48, 0);
+    group.add(head);
+
+    var beakMat = new THREE.MeshStandardMaterial({ color: 0xe08a1e, roughness: 0.5 });
+    var beak = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.12, 8), beakMat);
+    beak.rotation.z = Math.PI / 2;
+    beak.position.set(0.34, 0.46, 0);
+    group.add(beak);
+
+    var eyeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+    [1, -1].forEach(function (s) {
+      var eye = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), eyeMat);
+      eye.position.set(0.27, 0.52, 0.09 * s);
+      group.add(eye);
+    });
+
+    deskGroup.add(group);
+
+    registerInteractive(group, body, {
+      onClick: function () {
+        if (reduceMotion) return;
+        gsap.timeline()
+          .to(group.scale, { y: 0.6, duration: 0.1, ease: 'power1.in' })
+          .to(group.scale, { y: 1, duration: 0.35, ease: 'bounce.out' });
+      }
+    });
+    return group;
+  }
+
+  function buildPen() {
+    var group = new THREE.Group();
+    group.position.set(3.2, -0.0, -1.2);
+    var fallen = false;
+
+    var bodyMat = new THREE.MeshStandardMaterial({ color: 0x2255cc, roughness: 0.35, metalness: 0.2 });
+    var body = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.1, 12), bodyMat);
+    body.rotation.z = Math.PI / 2;
+    group.add(body);
+
+    var tipMat = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.2, metalness: 0.8 });
+    var tip = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.14, 12), tipMat);
+    tip.rotation.z = -Math.PI / 2;
+    tip.position.x = 0.62;
+    group.add(tip);
+
+    deskGroup.add(group);
+
+    registerInteractive(group, group, {
+      onClick: function () {
+        if (fallen) return;
+        fallen = true;
+        if (reduceMotion) {
+          group.position.set(3.6, -1.6, -1.6);
+          group.rotation.set(0.4, 0, 1.4);
+          return;
+        }
+        gsap.to(group.position, { x: 3.6, y: -1.6, z: -1.6, duration: 0.7, ease: 'power2.in' });
+        gsap.to(group.rotation, { x: 2.2, y: 1.1, z: 3.4, duration: 0.7, ease: 'power1.in' });
+      }
+    });
+    return group;
+  }
+
+  buildPlant();
+  buildDuck();
+  buildPen();
+
   // Exposed for later tasks in this file (object factories, raycasting, theme toggle)
   // via closure — subsequent tasks append to this same IIFE rather than creating new globals.
   window.__resumeScene = {
