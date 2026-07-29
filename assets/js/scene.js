@@ -42,7 +42,7 @@
       ambientColor: 0x2a3040,
       ambientIntensity: 0.85,
       bgColor: 0x0a0c10,
-      deskColor: 0x2b2f38,
+      deskColor: 0x4a3626,
       fillColor: 0x8fa0bd
     },
     'cyberpunk': {
@@ -416,12 +416,17 @@
       onClick: function () {
         if (fallen) return;
         fallen = true;
+        // Desk half-width is 4.2 on x (BoxGeometry(8.4,...)) — the fall must clear
+        // that edge horizontally before dropping in y, or the pen visually sinks
+        // through the solid desk slab instead of tumbling off its side.
         if (!canAnimate) {
-          group.position.set(3.6, -1.6, -1.6);
+          group.position.set(4.7, -1.6, -1.8);
           group.rotation.set(2.2, 1.1, 3.4);
           return;
         }
-        gsap.to(group.position, { x: 3.6, y: -1.6, z: -1.6, duration: 0.7, ease: 'power2.in' });
+        gsap.timeline()
+          .to(group.position, { x: 4.5, z: -1.5, duration: 0.25, ease: 'power1.out' })
+          .to(group.position, { x: 4.7, y: -1.6, z: -1.8, duration: 0.45, ease: 'power2.in' });
         gsap.to(group.rotation, { x: 2.2, y: 1.1, z: 3.4, duration: 0.7, ease: 'power1.in' });
       }
     });
@@ -442,11 +447,14 @@
 
     var baseMat = new THREE.MeshStandardMaterial({ color: 0x4a4d52, roughness: 0.4, metalness: 0.5 });
     var base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 1.0), baseMat);
-    base.position.y = 0.03;
+    // group.position.y is -0.15 (the shared desk-surface baseline); +0.18 here
+    // puts the base's bottom face flush with the desk's actual top surface (y=0)
+    // instead of half-submerged in it.
+    base.position.y = 0.18;
     group.add(base);
 
     var hinge = new THREE.Group();
-    hinge.position.set(0, 0.06, -0.48);
+    hinge.position.set(0, 0.21, -0.48); // raised to match base's new resting height
     group.add(hinge);
 
     var screenMat = new THREE.MeshStandardMaterial({ color: 0x3a3d42, roughness: 0.4, metalness: 0.5 });
