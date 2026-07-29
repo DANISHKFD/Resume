@@ -580,7 +580,11 @@
 
   function buildNotebook() {
     var group = new THREE.Group();
-    group.position.set(1.1, 0, 1.4); // y=0 is the desk's top surface, see buildLamp
+    // x=0.6, not 1.1: the notebook's cover swings from its pivot at the group's
+    // local x=0 out to local x=0.75 (world 1.85 at the old x=1.1), which overlapped
+    // the lamp's base footprint (world x 1.74-2.46, z 0.84-1.56) — the two meshes
+    // intersected and z-fought. Moved left to clear it with margin.
+    group.position.set(0.6, 0, 1.4); // y=0 is the desk's top surface, see buildLamp
     var opened = false;
 
     var coverMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.7 });
@@ -631,7 +635,13 @@
     group.add(cup);
 
     var handle = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 8, 20, Math.PI), mugMat);
+    // A torus's hole-axis defaults to Z (its ring lies flat in the XY plane, facing
+    // the camera edge-on). rotation.z alone just spins that flat ring in place —
+    // it never turns the loop to face outward, so the handle rendered as a barely
+    // visible sliver. rotation.y turns the hole-axis to X, standing the loop up so
+    // it actually reads as a handle protruding from the cup's side.
     handle.rotation.z = Math.PI / 2;
+    handle.rotation.y = Math.PI / 2;
     handle.position.set(0.24, 0.2, 0);
     group.add(handle);
 
