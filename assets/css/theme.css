@@ -4,14 +4,14 @@
 
 :root,
 :root[data-theme="desk-lamp"] {
-  --bg: #0A0C10;
-  --bg-raised: #12151C;
-  --panel-bg: #14171Fee;
+  --bg: #201812;
+  --bg-raised: #2C2118;
+  --panel-bg: #2A1F17ee;
   --ink: #EDEAE0;
-  --ink-dim: #8B8F98;
-  --rail: #262B35;
+  --ink-dim: #A8988A;
+  --rail: #4A3826;
   --accent: #D9A441;      /* brass lamp light */
-  --accent-ink: #0A0C10;
+  --accent-ink: #201812;
   --accent-2: #6EA8AE;    /* slate-cyan secondary */
   --thread-amber: #F2A93B;
   --thread-blue: #3FA7FF;
@@ -23,14 +23,14 @@
 }
 
 :root[data-theme="cyberpunk"] {
-  --bg: #08090A;
-  --bg-raised: #101008;
-  --panel-bg: #0C0C0Cee;
+  --bg: #1C1A08;
+  --bg-raised: #262210;
+  --panel-bg: #241F0Cee;
   --ink: #F5F3E7;
-  --ink-dim: #B8B49A;
-  --rail: #33330F;
+  --ink-dim: #C4BE94;
+  --rail: #4A4718;
   --accent: #FCEE0A;      /* hazard yellow */
-  --accent-ink: #08090A;
+  --accent-ink: #1C1A08;
   --accent-2: #1FE5F0;    /* glitch cyan */
   --thread-amber: #FCEE0A;
   --thread-blue: #1FE5F0;

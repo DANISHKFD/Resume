@@ -39,18 +39,18 @@
     'desk-lamp': {
       lampColor: 0xffb066,
       lampIntensity: 1.5,
-      ambientColor: 0x2a3040,
+      ambientColor: 0x362a1e,
       ambientIntensity: 0.85,
-      bgColor: 0x0a0c10,
+      bgColor: 0x201812,
       deskColor: 0x4a3626,
       fillColor: 0x8fa0bd
     },
     'cyberpunk': {
       lampColor: 0x1fe5f0,
       lampIntensity: 1.7,
-      ambientColor: 0x2a2410,
+      ambientColor: 0x342c10,
       ambientIntensity: 0.7,
-      bgColor: 0x08090a,
+      bgColor: 0x1c1a08,
       deskColor: 0x14140a,
       fillColor: 0x9a6fd0
     }
