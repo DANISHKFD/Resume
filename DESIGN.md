@@ -1,171 +1,207 @@
 ---
 name: Danish Ahmed N F — Portfolio
-description: "The Data Line — a transit/circuit schematic portfolio where skill domains are colored lines and projects are interchange stations."
+description: "The Desk, After Hours — a real-time 3D desk scene you click around; every object on it opens a different part of the resume."
 colors:
-  bg: "#0B0E14"
-  bg-raised: "#10141C"
-  ink: "#E7ECF3"
-  ink-dim: "#7C8798"
-  spine: "#232B3A"
-  line-programming: "#F2A93B"
-  line-web: "#3FA7FF"
-  line-data: "#C05CFF"
-  line-tools: "#33D6A6"
+  bg: "#0A0C10"
+  bg-raised: "#12151C"
+  panel-bg: "#14171Fee"
+  ink: "#EDEAE0"
+  ink-dim: "#8B8F98"
+  rail: "#262B35"
+  accent: "#D9A441"
+  accent-ink: "#0A0C10"
+  accent-2: "#6EA8AE"
+  thread-amber: "#F2A93B"
+  thread-blue: "#3FA7FF"
+  thread-violet: "#C05CFF"
+  thread-teal: "#33D6A6"
 typography:
   hero:
-    fontFamily: "'Overpass', sans-serif"
-    fontWeight: 800
-    fontSize: "clamp(40px, 7vw, 92px)"
-    lineHeight: 1.02
-    letterSpacing: "-0.01em"
-  section-title:
-    fontFamily: "'Overpass', sans-serif"
+    fontFamily: "'Fraunces', serif"
     fontWeight: 700
-    fontSize: "clamp(26px, 3.2vw, 40px)"
-    letterSpacing: "-0.005em"
-  station-title:
-    fontFamily: "'Overpass', sans-serif"
+    fontSize: "clamp(32px, 6vw, 64px)"
+    lineHeight: 1.05
+  panel-title:
+    fontFamily: "'Fraunces', serif"
     fontWeight: 700
-    fontSize: "clamp(19px, 2vw, 24px)"
-  body:
-    fontFamily: "'Overpass', sans-serif"
+    fontSize: "clamp(30px, 5vw, 52px)"
+  panel-subtitle:
+    fontFamily: "'Fraunces', serif"
+    fontWeight: 600
+    fontSize: "22px"
+  hero-cyberpunk:
+    fontFamily: "'Chakra Petch', sans-serif"
+    fontWeight: 700
+    fontSize: "clamp(32px, 6vw, 64px)"
+    lineHeight: 1.05
+  eyebrow:
+    fontFamily: "'IBM Plex Mono', monospace"
     fontWeight: 400
-    fontSize: "15px"
+    fontSize: "12px"
+    letterSpacing: "0.08em"
+    textTransform: "uppercase"
+  body:
+    fontFamily: "'Inter', sans-serif"
+    fontWeight: 400
+    fontSize: "16px"
     lineHeight: 1.7
   readout:
-    fontFamily: "'Overpass Mono', monospace"
+    fontFamily: "'IBM Plex Mono', monospace"
     fontWeight: 400
-    fontSize: "11.5-13px"
-    letterSpacing: "0.06-0.1em"
+    fontSize: "11-13px"
+    letterSpacing: "0.03-0.09em"
 rounded:
-  none: "0px"
-  station: "50%"
-spacing:
-  spine-gutter: "clamp(64px,9vw,104px)"
-  page-pad-x: "clamp(24px,5vw,64px)"
-  page-pad-y: "112px"
+  card: "4px"
+  pill: "22px"
+  circle: "50%"
 components:
-  station-node:
-    background: "{colors.bg}"
-    border: "2px solid {colors.spine}"
-    rounded: "{rounded.station}"
-  station-node-active:
-    border: "2px solid {colors.line-web}"
-  interchange-ring:
-    background: "conic-gradient(from 0deg, var(--seg-colors))"
-    rounded: "{rounded.station}"
+  theme-toggle:
+    backgroundColor: "{colors.bg-raised}"
+    textColor: "{colors.ink-dim}"
+    rounded: "{rounded.pill}"
+    padding: "11px 16px"
+  panel-close:
+    backgroundColor: "{colors.bg-raised}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.circle}"
+    size: "44px"
+  card:
+    backgroundColor: "{colors.bg-raised}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.card}"
+    padding: "20px"
 ---
 
 # Design System: Danish Ahmed N F — Portfolio
 
 ## Overview
 
-**Creative North Star: "The Data Line"**
+**Creative North Star: "The Desk, After Hours"**
 
-The site is staged as a transit/circuit schematic: a signal-lit spine runs the length of the page, and every section is a station on it. Each of the four real skill categories (Programming, Web & Backend, Data & ML, Databases & Tools) is a named, colored line; projects are **interchange stations** — their station ring is a conic-gradient wedge of every line whose tech actually appears in that project's real tag list, so "breadth across full-stack and data/ML" (the product's core positioning claim) is drawn as literal infrastructure instead of asserted in a sentence. The hero is a route console the visitor operates — pick a destination, the signal travels the spine to it as the page scrolls. Nothing here is decorative cartography: every line a project touches, every interchange size, is derived from that project's real stack.
+The homepage is not a page you scroll — it is a desk you sit down at. A single warm desk lamp lights a real-time 3D scene (Three.js), and every object on the desk is a working part of the resume: click the laptop and it opens, lights up, and carries you to Projects; click the notebook and its cover swings open into Education; nudge the coffee mug and its steam rises on the way to Contact. Ten objects, six of them doorways, four of them purely tactile (the lamp, the plant, a rubber duck, a pen that topples if you flick it) — because a desk that only had "buttons shaped like resume sections" on it would just be a nav bar wearing a costume. The clutter is the point: a duck and a trophy and a photo frame are what make it a *desk*, not a *menu*.
 
-This replaced the "Passbook" ledger direction, which the user found didn't fit. Where the Passbook proved *verified data*, the Data Line proves *versatility* — the other half of the product's positioning — through a different, equally-grounded artifact: dev/data-culture's own diagram language (DAGs, schematics) fused with transit-map convention, not a generic "modern portfolio" template.
+The whole scene runs on one light source with a story: the desk lamp itself. Toggle it and the ambient level drops with it — turning the lamp off is not a decorative dim, it changes what the point light in the scene is actually doing. A quiet, cool directional fill from the opposite corner keeps the far side of the desk (the trophy, the photo frame, the little figurine) from disappearing into true black, but it never competes with the lamp for "what's the light source here" — it reads as moonlight through a window, not a second lamp.
+
+This replaced "The Data Line," a transit-schematic direction (skill categories as colored subway lines, projects as interchange stations) that the user found didn't fit. Where the Data Line proved *versatility* through infrastructure metaphor, the Desk proves the same thing through *physical evidence*: a workspace with real tools on it, the way growon.kr's interactive desk scene demonstrated a real person behind a real practice, not a data diagram of one.
 
 **Key Characteristics:**
-- One continuous schematic spine (a vertical rail in the left gutter) carries a station marker per section; simple sections get a plain ring, project sections get a multi-color interchange ring sized to how many lines actually converge there.
-- A single traveling signal dot rides the spine, position bound to scroll progress — the one authored through-line motion, not a decoration repeated per element.
-- One typeface family (Overpass) does every display and body job, the way a transit system's signage face never changes between a station name and a safety notice; Overpass Mono is reserved for readouts only (stats, tags, coordinates).
-- Circles are reserved exclusively for stations — nothing else on the page is ever round.
-- Glow is reserved for things that are lit in the source material (the traveling signal, the active line, live-status indicators) — never a decorative halo on resting content.
+- One warm point-light source (the desk lamp) drives the entire scene's mood; every other light is subordinate to it — a fill light lifts shadow, it never rivals the lamp as a second highlight.
+- Ten physical objects, not ten buttons: each animates in character before it acts (the notebook's cover physically swings open, the trophy glints, the mug's steam rises) — the motion *is* the affordance, discovered by hovering/clicking, not labeled with a tooltip.
+- A second full theme — "Cyberpunk" — recolors the same scene and the same seven pages by swapping CSS custom properties and the Three.js light/material colors together, off one `localStorage` flag; the desk doesn't change shape, only its light.
+- **The typeface changes with the light.** Fraunces (a warm, slightly bookish serif) is the Desk Lamp display face; flipping to Cyberpunk swaps every heading to Chakra Petch (a hard, geometric tech face) — the theme toggle is not just a recolor, the whole page's *handwriting* changes.
+- Destination pages never pretend to be the desk scene continuing — they're a distinct "panel" register (a sliding card over a blurred backdrop-gradient echo of the desk's palette), because re-rendering a full Three.js scene on every content page would cost more than it would earn.
 
 ## Colors
 
-Near-black schematic ground with four named signal-line colors carrying real information, not decoration — a Full Palette strategy earned by the source material (transit lines are color-coded by definition).
+Near-black, warm-neutral ground that reads as "a room with one lamp on," not a generic dark-mode gray. Two full theme variants exist, switched at runtime — the frontmatter above records the default ("Desk Lamp"); the second ("Cyberpunk") is documented in full below because both are equally real, shipped, reachable states, not a draft alternate.
 
-### Primary — the four skill lines
-- **Programming Line — Signal Amber** (`#F2A93B`): Python, JavaScript, C/C++, HTML.
-- **Web & Backend Line — Signal Blue** (`#3FA7FF`): Flask, REST APIs, React, Vite/Tailwind. Also the default "active/selected" highlight color for interactive spine elements (nav current-section, focus rings).
-- **Data & ML Line — Signal Violet** (`#C05CFF`): PyTorch, Sentence Transformers, FAISS, Pandas/NumPy.
-- **Databases & Tools Line — Signal Teal** (`#33D6A6`): PostgreSQL, MySQL, Git/Linux, Docker.
+### Primary
+- **Brass Lamp Light** (`#D9A441` / Cyberpunk: `#FCEE0A` Hazard Yellow): the one accent color per theme — link hover, focus states, the lit desk-lamp glow, the "currently on" states. Used sparingly: headline emphasis span, hover states, and the mono `strong` labels in fact rows.
+- **Slate Cyan** (`#6EA8AE` / Cyberpunk: `#1FE5F0` Glitch Cyan): the secondary accent — inline links inside body copy (`a.inline-link`), so a reader can tell "this text is clickable" apart from "this is the theme's hero accent," without introducing a third hue.
+
+### Secondary — the four skill-tag colors (inherited, repurposed)
+Education & Skills tags each skill category by one of four colors, a direct carry-over from the site's previous "Data Line" concept (the four skill categories used to be literal subway lines; here they're plain heading colors on four skill cards):
+- **Signal Amber** (`#F2A93B` / Cyberpunk: `#FCEE0A`): Programming.
+- **Signal Blue** (`#3FA7FF` / Cyberpunk: `#1FE5F0`): Web & Backend.
+- **Signal Violet** (`#C05CFF` / Cyberpunk: `#1FE5F0`): Data & ML.
+- **Signal Teal** (`#33D6A6` / Cyberpunk: `#FCEE0A`): Databases & Tools.
+In Cyberpunk mode these four collapse to the theme's two accents (yellow/cyan) rather than keeping four independent hues — correct, because Cyberpunk's whole point is a two-tone hazard palette; keeping four soft "Data Line" hues alive inside it would fight the theme's own logic.
 
 ### Neutral
-- **Schematic Graphite** (`#0B0E14`): page background throughout — one surface, no cover/page split like the prior system.
-- **Panel Graphite** (`#10141C`): the hero console and any raised instrument-panel surface.
-- **Signal White** (`#E7ECF3`): primary text.
-- **Steel Dim** (`#7C8798`): secondary text, inactive labels, unselected spine segments.
-- **Rail** (`#232B3A`): the spine itself at rest, station-ring borders before activation.
+- **Near-Black Room** (`#0A0C10` bg / `#12151C` bg-raised / Cyberpunk: `#08090A` / `#101008`): page background and any raised surface (cards, the corner-nav dropdown, the theme toggle pill).
+- **Warm Parchment Ink** (`#EDEAE0` / Cyberpunk: `#F5F3E7`): primary text — warm off-white, not pure `#FFF`, so it sits comfortably against the warm-black background instead of glaring.
+- **Steel Dim** (`#8B8F98` / Cyberpunk: `#B8B49A`): secondary text, dates, tag lists, unfocused nav links. Contrast-checked at 6.0:1 on `bg` (9.5:1 in Cyberpunk) — comfortably above WCAG AA for body text.
+- **Rail** (`#262B35` / Cyberpunk: `#33330F`): borders on cards, the nav dropdown, the corner buttons.
+- **Reserved, not yet drawn on:** `--accent-ink` (text-on-filled-accent) and `--panel-bg` (a translucent panel surface) are declared in both themes but no current component fills a surface solidly enough to need them — they exist for the next filled-accent button or true glass panel, not dead code to delete.
 
 ### Named Rules
-**The Truth-Mapped Line Rule.** A line color may only appear next to a piece of content that genuinely belongs to that skill category (a tag, a section). Interchange-ring segments at each project are generated from that project's real `work-tags`, never hand-picked for balance or color variety. If a project only touches one line, its ring is one color, not four — an honest single-line stop, not an interchange.
+**The One Lamp Rule.** Only one light in the 3D scene is allowed to read as "the light source": the desk lamp. A fill light may lift shadow so nothing goes pure-black-unclickable, but it is a directional, low-intensity, room-ambient light — never a second point light competing for "where is this scene lit from."
 
-**The Glow-Is-Lit Rule.** A glow effect (soft blur halo, not a hard shadow) is reserved for things that are actually lit in the schematic world: the traveling signal dot, the currently-active line, live/status indicators. It never appears on cards, text, or resting UI as generic polish.
+**The Theme-Is-The-Light Rule.** Desk Lamp and Cyberpunk are not two color swaps layered on one fixed scene — the Three.js point-light color, the ambient color, the desk material color, and every CSS token change together off the same stored flag. A component that only reskins in CSS but ignores the WebGL lighting has not actually implemented the theme.
 
 ## Typography
 
-**Display & Body Font:** Overpass (400/600/700/800) — one signage typeface for hero, section titles, station titles, nav, and body prose alike. Overpass is drawn from Highway Gothic, the US highway/transit signage face; using one family everywhere is a deliberate echo of how a real transit system's signage never changes typeface between a station name and a safety notice.
-**Readout Font:** Overpass Mono — reserved for anything that is data rather than prose: tech-stack tags, dates, stat readouts, the console's route input, nav micro-labels.
+**Display Font:** Fraunces (with `serif` fallback) in Desk Lamp mode; Chakra Petch (with `sans-serif` fallback) in Cyberpunk mode — the display face itself is a theme token, swapped by `--font-display` in `theme.css`, not just its color.
+**Body Font:** Inter (with `sans-serif` fallback) — unchanged by theme; body prose stays legible and quiet regardless of which mood the desk is in.
+**Mono/Readout Font:** IBM Plex Mono — every non-prose token: the eyebrow labels, nav-menu, tag lists, dates, the "Menu"/theme-toggle chrome.
 
-**Character:** Confident, geometric, built for legibility at a glance and at a distance — a working signage face, not a display face borrowed for mood.
+**Character:** Fraunces is warm, slightly literary, a touch old-fashioned — a nameplate on a wooden desk, not a display face borrowed for drama. Chakra Petch is hard and geometric — the same headline in the same position suddenly reads like a terminal prompt. Inter and IBM Plex Mono are the load-bearing, opinion-free workhorses underneath both moods.
 
 ### Hierarchy
-- **Hero** (800, `clamp(40px,7vw,92px)`, line-height 1.02): the console headline only.
-- **Section Title** (700, `clamp(26px,3.2vw,40px)`): one per station/section, set beside its station node.
-- **Station Title** (700, `clamp(19px,2vw,24px)`): individual entries within a section (a project, a role, a degree).
-- **Body** (400, 15px, line-height 1.7, ~72ch max): all prose. A 14px caption step exists for secondary detail lines (edu-school, cert entries) — never used for primary description text.
-- **Readout** (400, letter-spacing 0.04–0.1em, uppercase where used): a deliberate three-step mono micro-scale — **11px** (footer, scroll-hint, nav-links — quietest chrome), **12px** (the default: tags, dates, section labels, console controls, legend labels), **13px** (nav-mark, hero-sub — identity/thesis emphasis). A single **15px** step is reserved for the terminus contact-link CTA, the largest readout step on the page.
-- **Fixed smaller instances:** `exp-role h3` (20px) and `edu-item h3` (18px) are the Station Title role at smaller fixed sizes rather than the fluid clamp — same role, denser context.
-- **About Lead** (400, `clamp(18px,2vw,23px)`, line-height 1.6): the About station's opening statement — a one-off larger-body variant for the page's single lead paragraph, not a reusable role.
-- **Terminus** (800, `clamp(32px,5.4vw,68px)`, line-height 1.08): the closing station's headline — Hero's register reused at a smaller scale for the page's one deliberate closing statement, matching how Terminus reuses Hero's weight rather than Section Title's.
+- **Hero** (700, `clamp(32px,6vw,64px)`, line-height 1.05): `index.html`'s "Danish Ahmed N F" headline only, one instance.
+- **Panel Title** (700, `clamp(30px,5vw,52px)`): each destination page's single `<h1>` (e.g. "Real, deployed, verifiable.").
+- **Panel Subtitle** (600, 22px): `<h2>` inside a panel — "Experience", "Skills", "Education".
+- **Eyebrow** (400, 12px, letter-spacing 0.08-0.09em, uppercase, mono): the small label above every panel title ("PROJECTS", "CONTACT") and the hero's location line.
+- **Body** (400, 16px, line-height 1.7, ~70ch max): all panel prose.
+- **Readout** (400, 11-13px, mono): nav links, tags, dates, the theme toggle and menu button labels.
 
 ### Named Rules
-**One Signage Face Rule.** Overpass carries every heading and every prose sentence; Overpass Mono carries every non-prose data token. No third typeface is introduced for "personality" — the signage system is the personality.
+**The Theme-Bound Type Rule.** The display typeface is not a static brand choice — it is bound to `data-theme` the same way color is. Any new heading-level element must inherit `var(--font-display)` rather than hard-coding a family, or it will silently stay Fraunces after a Cyberpunk switch.
 
 ## Layout
 
-A single continuous **spine** runs down the page inside a fixed-width left gutter (`clamp(64px,9vw,104px)`), present on every section — not a per-page-type device, the one spatial constant of the whole site. Content sits to the right of the spine, padded clear of it. Each section opens with a **station node** sitting on the spine at content-top: a circle, `--rail`-bordered at rest, that becomes a conic-gradient **interchange ring** for any entry (a project) whose tags touch more than one skill line.
+`index.html` is a fixed, non-scrolling viewport (`html,body{ overflow:hidden }`): the desk fills the screen, the hero headline and tagline float centered near the top with `pointer-events:none` (so they never block a click meant for the canvas underneath), and a `.scene-hint` sits fixed near the bottom. There is nothing to scroll because there is nothing below the desk — everything else lives one click away on a destination page.
 
-The hero is the **route console**: a headline, an "in service" status line, and a bank of four line-chips plus destination buttons a visitor actually operates to jump to a section — real navigation wearing the console's vocabulary, not a decorative fake input.
+Destination pages are the opposite: a single centered column (`max-width:860px`), generous top padding (96px, tightening to 84px under 720px) to clear the fixed corner-nav and close button, standard document flow and scroll. `.card-grid` runs two columns (three on the Gallery page, set inline) and collapses to one column under 720px.
 
-A single **signal dot** rides the spine at a vertical position bound to overall scroll progress (GSAP ScrollTrigger, scrubbed) — the page's one authored through-line motion. Section entrances are a restrained translateX-from-the-spine-side fade, distinct from (not competing with) the signal dot's motion.
+The corner nav (top-right, `Menu` button + dropdown) and the theme toggle (top-left on `index.html`, bottom-left on mobile) are fixed-position and present, in the same visual language, on every page including the no-WebGL fallback — the one spatial constant across all seven pages, the way the desk-lamp light is the one constant across both themes.
 
-Collapses to a single-column, narrower-gutter spine at 800px — the natural behavior of a transit line diagram on a small screen, not a special-cased mobile layout.
+Responsive breakpoint: 720px. Below it, `index.html`'s hero type steps down, the theme toggle relocates to the bottom-left (out of the way of the thumb-height hero text), and the scene's WebGL pixel-ratio cap drops from 2 to 1.5 to protect frame rate on typical phone GPUs.
 
 ## Elevation & Depth
 
-Flat schematic linework by default — no shadows on resting content. The one form of depth is **glow**, reserved per the Glow-Is-Lit Rule: a soft blur-radius halo (never a hard zero-offset colored border) on the traveling signal dot, the active/selected line and station, and the console's "in service" indicator.
+Flat, bordered surfaces — no drop shadows anywhere in the 2D chrome. A card, the nav dropdown, and the theme toggle are all distinguished from the background by a 1px `--rail` border and a step up to `--bg-raised`, never a shadow. The one true "depth" in the whole design is the desk scene's own Z-axis: real perspective, real point-light falloff, and real cast shadows from the lamp (`renderer.shadowMap.enabled = true`) doing the elevation work that CSS shadows would otherwise fake.
 
 ### Named Rules
-**Line-Not-Shadow Rule.** Depth and hierarchy come from line weight, color, and glow-when-lit — never from a drop shadow. A schematic doesn't cast shadows; it lights up.
+**The Real Depth Rule.** Depth is either genuinely three-dimensional (the WebGL scene) or genuinely flat (a 1px border, a background step) — never a CSS shadow standing in for depth that isn't there. A drop-shadow on a 2D card would be decoration pretending to be the desk's real lighting.
 
 ## Shapes
 
-Rectilinear everywhere except stations. Every station node, every interchange ring, every signal dot is a circle; nothing else on the page is ever round — no rounded corners on panels, chips, or buttons.
+Three deliberate radius steps, one per interaction weight, not a sliding scale:
+- **Circle** (`border-radius:50%`): icon-only round controls — the corner-nav "Menu" button and every destination page's "back to desk" (×) close button. A circle reads as a single physical button, the way a real desk-lamp switch or a doorbell is round.
+- **Pill** (`22px`, effectively full on a ~44px-tall control): the theme toggle — a labeled control (has visible text, not just an icon), so it gets the softer, friendlier pill rather than a hard circle.
+- **Card** (`4px`): content containers — `.card`, in the project/gallery/accomplishments grids. Barely rounded, close to square, so cards read as index cards on the desk rather than soft app-UI tiles.
 
 ### Named Rules
-**The Circle-Is-A-Station Rule.** A circle means "this is a stop on the line." If a circle appears anywhere that isn't a station node or the signal dot, the shape language has broken.
+**The Label Decides The Curve Rule.** An icon-only control is a circle; a labeled control is a pill; a content container is a barely-rounded card. The radius is chosen by what the element *is*, not picked once and reused everywhere.
 
 ## Components
 
-### Route Console (signature component)
-The hero's operable panel: an Overpass Mono route-input styled like a journey planner, four line-chips (Programming/Web & Backend/Data & ML/Databases & Tools, each in its line color), and destination buttons for each section. Selecting a destination smooth-scrolls there; the signal dot's position (bound to scroll) does the rest — no separate animation to fake.
+### Desk Objects (signature component)
+Ten Three.js groups on the desk, each `registerInteractive`-wired to a raycaster hit-test with `onHoverIn`/`onClick` handlers, built in `assets/js/scene.js`:
+- **Doorways** (6): laptop → Projects (lid opens, screen glows), notebook → Education (cover swings open), coffee mug → Contact (steam puffs rise), trophy → Accomplishments (gold glints), photo frame → Gallery (tilts), desk figurine → About (a small nod). Each plays its full GSAP animation, then navigates after a short delay (500-650ms) so the click always reads as "this object did something," never an instant blank-white nav.
+- **Decorative-only** (4): desk lamp (click toggles on/off, animating light + ambient + emissive together), potted plant (leaves sway), rubber duck (squash-and-bounce), pen (falls off the desk once, permanently — the one object whose interaction has a visible, lasting after-state).
+- Every animation has an instant, GSAP-free fallback branch gated on `prefers-reduced-motion`, including the doorway navigation itself (0ms delay instead of the eased approach).
 
-### Station Nodes
-- **Simple station:** a circle, 2px `--rail` border, `bg` fill, at rest; the currently-in-view section's node gets a Signal Blue glow border (active state).
-- **Interchange station (projects):** the ring fill is a `conic-gradient` built from the project's real tag-to-line mapping — one wedge per line touched, equal-sized. A single-line project renders as a solid-color ring, not a gradient.
+### Theme Toggle
+Pill-shaped, mono-labeled ("Cyberpunk mode"), fixed top-left on `index.html` only (destination pages inherit the stored theme but don't carry their own toggle — the lamp lives on the desk, not on every page). Hover shifts border and text to the theme's accent color.
 
-### Links / Actions
-No `<button>` chrome beyond the console's own controls. In-content links are Overpass Mono, Steel Dim at rest, moving to their nearest line-color (or Signal Blue by default) on hover, arrow-suffixed with the established widening-gap hover motion.
+### Corner Nav
+A circular "Menu" button, fixed top-right on every page, expanding a `--bg-raised` dropdown of the 6 section links + Resume PDF. Opens on click (`.is-open` class) or on keyboard focus (`#nav-list:focus-within`) — the second path means a Tab-only visitor never needs to activate the button at all; focusing the first link inside it opens the panel automatically.
 
-### Navigation
-Fixed top bar, Panel Graphite background, Overpass Mono uppercase links. The link matching the section currently nearest the signal dot carries a small line-color underline — the nav itself reads the spine's current position.
+### Panel Close
+A circular `×` button, fixed top-left on every destination page, always returning to `index.html`. Deliberately placed opposite the corner nav (not stacked under it) so the two fixed circular controls never visually collide.
+
+### Cards / Fact Rows
+- **Card:** `--bg-raised` fill, 1px `--rail` border, 4px radius, 20px padding — projects, accomplishments, gallery entries.
+- **Fact Row:** border-bottom only (no full card), a mono uppercase `--accent` label above a plain value line — About's bio facts, Education's degree list. Lighter-weight than a card for content that's a single fact, not a multi-line description.
+
+### No-WebGL Fallback
+A centered, single-column card (`#fallback`) with the same headline copy and the same 7 links as the working corner-nav, styled with the same tokens. Shown instead of the scene — never alongside it — whenever `getContext('webgl')` fails or the Three.js CDN script didn't load. The site's one true "empty state": nobody who can't render the scene loses access to any content.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** derive every interchange ring from the entry's real tags — the Truth-Mapped Line Rule.
-- **Do** keep glow reserved for genuinely "lit" elements — the Glow-Is-Lit Rule.
-- **Do** keep circles exclusive to stations — the Circle-Is-A-Station Rule.
-- **Do** run Overpass across every heading and body role, Overpass Mono across every data token — One Signage Face Rule.
-- **Do** keep the spine present and structurally identical on every section; it is the one constant, not a hero-only flourish.
+- **Do** keep the desk lamp as the scene's only true light source — the One Lamp Rule.
+- **Do** update the Three.js light/material colors and the CSS custom properties together on every theme switch — the Theme-Is-The-Light Rule.
+- **Do** let the display typeface itself change with the theme, not just its color — the Theme-Bound Type Rule.
+- **Do** give every clickable desk object its own in-character animation before it acts; the motion is the affordance.
+- **Do** gate every scene animation (and the doorway navigation delay) on `prefers-reduced-motion`.
+- **Do** choose radius by what the control is (icon-only → circle, labeled → pill, container → card), not by habit.
 
 ### Don't:
-- **Don't** hand-pick interchange-ring colors for visual balance — they are computed from real tags only.
-- **Don't** add a drop shadow anywhere; depth is line weight and glow only.
-- **Don't** round a corner on anything that isn't a station or the signal dot.
-- **Don't** introduce a third typeface.
-- **Don't** let the console's destination buttons be decorative — every one must actually navigate.
+- **Don't** add a second light to the 3D scene that competes with the lamp for "where is this scene lit from"; a fill light stays subordinate and directional.
+- **Don't** add a CSS drop-shadow anywhere in the 2D chrome — depth is either the real WebGL scene or a flat 1px border, never a faked shadow.
+- **Don't** turn a desk object into a plain button; it must animate in its own physical character (open, glint, tilt, bounce) before any navigation happens.
+- **Don't** re-render the full Three.js scene on destination pages — the panel backdrop is a deliberate lightweight gradient echo, not a missing feature.
+- **Don't** hard-code a display font family on a new heading; inherit `var(--font-display)` so it stays theme-bound.

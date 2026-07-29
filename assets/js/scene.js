@@ -35,7 +35,8 @@
       ambientColor: 0x1a1f2b,
       ambientIntensity: 0.4,
       bgColor: 0x0a0c10,
-      deskColor: 0x2b2f38
+      deskColor: 0x2b2f38,
+      fillColor: 0x3a5a7a
     },
     'cyberpunk': {
       lampColor: 0x1fe5f0,
@@ -43,7 +44,8 @@
       ambientColor: 0x141400,
       ambientIntensity: 0.3,
       bgColor: 0x08090a,
-      deskColor: 0x14140a
+      deskColor: 0x14140a,
+      fillColor: 0x4a1a6a
     }
   };
 
@@ -54,7 +56,7 @@
     : (document.documentElement.getAttribute('data-theme') || 'desk-lamp');
   document.documentElement.setAttribute('data-theme', currentTheme);
 
-  var scene, camera, renderer, deskGroup, lampLight, ambientLight, lampBulbMat;
+  var scene, camera, renderer, deskGroup, lampLight, ambientLight, fillLight, lampBulbMat;
   var basecameraPos, targetParallax, currentParallax; // initialized in initScene() to ensure defined before animate()
   var clock = new THREE.Clock();
   var interactives = []; // populated by later tasks: meshes with userData.interactive = true
@@ -93,6 +95,14 @@
     lampLight.castShadow = true;
     lampLight.shadow.mapSize.set(1024, 1024);
     scene.add(lampLight);
+
+    // Cool, dim fill from the opposite corner — keeps the desk lamp as the one
+    // dramatic light source while lifting the far side of the desk (trophy, frame,
+    // figurine) out of near-total black, so every clickable object stays findable.
+    // Independent of the lamp toggle: it reads as ambient room light, not the lamp.
+    fillLight = new THREE.DirectionalLight(theme.fillColor, 0.55);
+    fillLight.position.set(-5, 6, -4);
+    scene.add(fillLight);
 
     deskGroup = new THREE.Group();
     scene.add(deskGroup);
@@ -657,6 +667,7 @@
     get deskGroup() { return deskGroup; },
     get lampLight() { return lampLight; },
     get ambientLight() { return ambientLight; },
+    get fillLight() { return fillLight; },
     THEMES: THEMES,
     reduceMotion: reduceMotion,
     interactives: interactives
@@ -671,6 +682,7 @@
     lampLight.intensity = lampOn ? theme.lampIntensity : 0;
     ambientLight.color.set(theme.ambientColor);
     ambientLight.intensity = lampOn ? theme.ambientIntensity : theme.ambientIntensity * 0.35;
+    fillLight.color.set(theme.fillColor);
     if (lampBulbMat) lampBulbMat.emissive.set(theme.lampColor);
   }
 

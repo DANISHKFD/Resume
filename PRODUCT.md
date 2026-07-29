@@ -24,14 +24,17 @@ This breadth must be presented honestly: versatile and capable across the stack,
 
 ## Operating Context
 
-Static single-page site (`index.html`), hosted via GitHub Pages at danishkfd.in (see `CNAME`). Linked from LinkedIn, resume outreach, and direct application submissions. Viewers typically click through to live project deployments (e.g., the RBI analytics dashboard on Vercel, Unified Dashboard on GitHub Pages) or the hosted resume PDF in the same repo.
+Static multi-page site (`index.html` + six destination pages), hosted via GitHub Pages at danishkfd.in (see `CNAME`). Linked from LinkedIn, resume outreach, and direct application submissions. Viewers typically click through to live project deployments (e.g., the RBI analytics dashboard on Vercel, Unified Dashboard on GitHub Pages) or the hosted resume PDF in the same repo.
 
 ## Capabilities and Constraints
 
-- Static HTML/CSS/JS, no build step or backend of its own; content changes mean editing `index.html` directly.
-- The hero is an operable "route console" (real destination links, no 3D/canvas library); a single scroll-bound signal indicator and GSAP/ScrollTrigger handle the entrance and section reveals; `prefers-reduced-motion` is already respected throughout.
-- Responsive breakpoint at 800px collapsing multi-column sections to single column.
-- Resume PDF (`Danish ahmed N F Resume.pdf`) lives in-repo and is linked directly from nav, hero, and footer.
+- Static HTML/CSS/JS, no build step or backend of its own; content changes mean editing the relevant page directly (`about.html`, `education.html`, `projects.html`, `accomplishments.html`, `gallery.html`, `contact.html`) plus `index.html` for the desk scene itself.
+- The homepage (`index.html`) is a real-time 3D desk scene (Three.js r128 + GSAP, `assets/js/scene.js`) rendered on a single `<canvas>`. Ten physical objects sit on the desk; six are "doorways" that click-navigate to a destination page (laptop → Projects, notebook → Education & Skills, mug → Contact, trophy → Accomplishments, picture frame → Gallery, desk figurine → About); the remaining four (desk lamp, plant, rubber duck, pen) are non-navigating decorative interactions. A `#fallback` static card (plain links, no canvas) renders instead whenever WebGL or the Three.js CDN script is unavailable — the homepage is never a dead end.
+- Two runtime themes, "Desk Lamp" (default, warm brass-and-amber) and "Cyberpunk" (opt-in, hazard-yellow-and-cyan), toggle live via a button on `index.html`, persist to `localStorage['resumeTheme']`, and sync onto whichever destination page the visitor lands on next — the desk-scene lighting and every page's CSS tokens both respond to the same stored value.
+- `prefers-reduced-motion` is respected throughout: every scene interaction (lamp toggle, plant sway, duck bounce, pen fall, each doorway's approach animation, the theme-switch glitch flicker, camera parallax) has an instant-jump-to-end-state fallback in `scene.js`, and `theme.css` collapses all CSS transitions/animations to near-zero duration.
+- Destination pages share chrome via `assets/css/panel.css` and `assets/js/panel.js`: a top-left "back to desk" close button, the same corner nav menu as the homepage, and a themed backdrop gradient standing in for the (intentionally not re-rendered) 3D scene.
+- Responsive breakpoints at 720px: `index.html`'s hero/nav/theme-toggle reflow via `theme.css`, destination pages' `.card-grid` collapses to one column via `panel.css`, and the scene's WebGL pixel-ratio cap drops from 2 to 1.5 below 720px width to protect frame rate on typical phone GPUs.
+- Resume PDF (`Danish ahmed N F Resume.pdf`) lives in-repo and is linked from the corner nav menu (present on every page, including the fallback card) and inline on the About and Contact pages.
 - Not every listed project has a live deployment; several (GemTutor, satellite classification, pharma EDA, Re-store, Repo Reviewer) are described without a "View live" link.
 
 ## Brand Commitments
@@ -62,4 +65,4 @@ Static single-page site (`index.html`), hosted via GitHub Pages at danishkfd.in 
 
 ## Accessibility & Inclusion
 
-`prefers-reduced-motion` is already respected across the hero's entrance motion, the scroll-bound signal indicator, and GSAP scroll-reveals; preserve this in any future changes.
+`prefers-reduced-motion` is already respected across every scene interaction, camera parallax, and theme-switch flourish (see Capabilities and Constraints); preserve this in any future changes. The desk scene is mouse/touch-only by nature (raycasting against 3D geometry), so every destination the scene can reach is also reachable without ever touching the canvas: the corner nav menu is real DOM, keyboard-tabbable in a fixed order (theme toggle → menu button → the 7 section/resume links, expanding via `:focus-within` without needing a click), and the no-WebGL fallback card exposes the same 7 links as plain, always-focusable anchors.

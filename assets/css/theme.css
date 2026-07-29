@@ -71,11 +71,14 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
   background:var(--bg-raised); border:1px solid var(--rail);
   min-width:220px; padding:10px;
   max-height:0; opacity:0; overflow:hidden; pointer-events:none;
-  transition: max-height .3s ease, opacity .3s ease;
+  transition: max-height .3s ease, opacity .2s ease;
 }
 #corner-nav.is-open #nav-list,
 #nav-list:focus-within{
-  max-height:400px; opacity:1; pointer-events:auto;
+  /* Matches the real 7-link content height (7 * ~38px + padding) rather than an
+     arbitrary large ceiling, so the eased transition tracks actual motion instead
+     of easing across a mostly-empty range. */
+  max-height:320px; opacity:1; pointer-events:auto;
 }
 #nav-list a{
   display:block; padding:10px 8px; color:var(--ink-dim); letter-spacing:.03em;

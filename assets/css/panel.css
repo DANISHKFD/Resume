@@ -47,6 +47,7 @@
 .panel a.inline-link:hover{ text-decoration:underline; }
 
 .card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px; }
+.card-grid--three{ grid-template-columns:1fr 1fr 1fr; }
 .card{
   border:1px solid var(--rail); background:var(--bg-raised); padding:20px;
   border-radius:4px;
