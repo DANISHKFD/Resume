@@ -3,6 +3,13 @@
   'use strict';
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // canAnimate gates every gsap.* call in the object factories below. It is false
+  // whenever reduceMotion is set (so reduced-motion still collapses to instant
+  // end-states) and also false if the GSAP CDN script failed to load — in that case
+  // every click handler falls back to the same instant end-state path instead of
+  // throwing a ReferenceError mid-handler (which used to leave the object's
+  // opened/clicked latch stuck true with no navigation ever happening).
+  var canAnimate = !reduceMotion && typeof gsap !== 'undefined';
 
   var sceneRoot = document.getElementById('scene-root');
   var fallback = document.getElementById('fallback');
@@ -60,10 +67,16 @@
   var basecameraPos, targetParallax, currentParallax; // initialized in initScene() to ensure defined before animate()
   var clock = new THREE.Clock();
   var interactives = []; // populated by later tasks: meshes with userData.interactive = true
+  var resetters = []; // one-shot doorway/decorative objects push a closure here that restores
+                       // their opened/clicked flag + idle visual pose; run on bfcache restore
 
   try {
     initScene();
     animate();
+    // Only scope the body's overflow:hidden (see index.html's inline <style>) to a
+    // confirmed-successful render — never add this before a possible throw, otherwise
+    // a failed init could leave scroll suppressed on top of the fallback card.
+    document.body.classList.add('scene-active');
   } catch (err) {
     console.error('Scene failed to initialize', err);
     showFallback();
@@ -201,6 +214,13 @@
   }
 
   function onPointerClick(evt) {
+    // Browsers synthesize a 'click' event ~300ms after 'touchend'. Without
+    // suppressing it, every tap would run the raycaster click handler twice — one-shot
+    // doorway objects absorb that harmlessly via their latch, but the lamp's toggle
+    // has no latch, so it would switch on then immediately back off on every tap,
+    // making the lamp a no-op on touch devices. touchend below calls preventDefault()
+    // to stop the synthesized click from ever firing.
+    if (evt.type === 'touchend') evt.preventDefault();
     updatePointer(evt);
     raycaster.setFromCamera(pointer, camera);
     var hits = raycaster.intersectObjects(interactives, true);
@@ -213,7 +233,9 @@
 
   renderer.domElement.addEventListener('mousemove', onPointerMove);
   renderer.domElement.addEventListener('click', onPointerClick);
-  renderer.domElement.addEventListener('touchend', onPointerClick);
+  // { passive: false } is required for preventDefault() (above) to actually suppress
+  // the browser's synthesized click event that follows touchend.
+  renderer.domElement.addEventListener('touchend', onPointerClick, { passive: false });
 
   function navigateAfter(href, delayMs) {
     if (reduceMotion) {
@@ -224,6 +246,14 @@
       window.location.href = href;
     }, delayMs);
   }
+
+  // Browsers restore this page from bfcache on back-navigation with JS state fully
+  // intact, so one-shot doorway objects (laptop, notebook, mug, trophy, frame,
+  // figurine, ...) would otherwise stay permanently "opened" — both their latch flag
+  // and their end-state visual pose — and never respond to a second click.
+  window.addEventListener('pageshow', function (evt) {
+    if (evt.persisted) resetters.forEach(function (reset) { reset(); });
+  });
 
   var lampOn = true;
 
@@ -275,7 +305,7 @@
     var targetAmbient = lampOn ? theme.ambientIntensity : theme.ambientIntensity * 0.35;
     var targetEmissive = lampOn ? 1.4 : 0;
 
-    if (reduceMotion) {
+    if (!canAnimate) {
       lampLight.intensity = targetLightIntensity;
       ambientLight.intensity = targetAmbient;
       lampBulbMat.emissiveIntensity = targetEmissive;
@@ -313,7 +343,7 @@
 
     registerInteractive(group, group, {
       onClick: function () {
-        if (reduceMotion) return;
+        if (!canAnimate) return;
         gsap.to(leaves.rotation, {
           z: leaves.rotation.z + 0.18, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut'
         });
@@ -353,7 +383,7 @@
 
     registerInteractive(group, body, {
       onClick: function () {
-        if (reduceMotion) return;
+        if (!canAnimate) return;
         gsap.timeline()
           .to(group.scale, { y: 0.6, duration: 0.1, ease: 'power1.in' })
           .to(group.scale, { y: 1, duration: 0.35, ease: 'bounce.out' });
@@ -364,7 +394,9 @@
 
   function buildPen() {
     var group = new THREE.Group();
-    group.position.set(3.2, -0.0, -1.2);
+    var idlePos = { x: 3.2, y: -0.0, z: -1.2 };
+    var idleRot = { x: 0, y: 0, z: 0 };
+    group.position.set(idlePos.x, idlePos.y, idlePos.z);
     var fallen = false;
 
     var bodyMat = new THREE.MeshStandardMaterial({ color: 0x2255cc, roughness: 0.35, metalness: 0.2 });
@@ -384,7 +416,7 @@
       onClick: function () {
         if (fallen) return;
         fallen = true;
-        if (reduceMotion) {
+        if (!canAnimate) {
           group.position.set(3.6, -1.6, -1.6);
           group.rotation.set(2.2, 1.1, 3.4);
           return;
@@ -393,6 +425,13 @@
         gsap.to(group.rotation, { x: 2.2, y: 1.1, z: 3.4, duration: 0.7, ease: 'power1.in' });
       }
     });
+
+    resetters.push(function () {
+      fallen = false;
+      group.position.set(idlePos.x, idlePos.y, idlePos.z);
+      group.rotation.set(idleRot.x, idleRot.y, idleRot.z);
+    });
+
     return group;
   }
 
@@ -429,7 +468,7 @@
     function openAndGo() {
       if (opened) return;
       opened = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         hinge.rotation.x = -1.75;
         glowMat.emissiveIntensity = 1;
         navigateAfter('projects.html', 0);
@@ -441,6 +480,13 @@
     }
 
     registerInteractive(group, group, { onClick: openAndGo });
+
+    resetters.push(function () {
+      opened = false;
+      hinge.rotation.x = -0.35; // idle angle set at build time
+      glowMat.emissiveIntensity = 0;
+    });
+
     return group;
   }
 
@@ -466,7 +512,7 @@
     function openAndGo() {
       if (opened) return;
       opened = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         coverPivot.rotation.z = Math.PI * 0.85;
         navigateAfter('education.html', 0);
         return;
@@ -476,6 +522,12 @@
     }
 
     registerInteractive(group, group, { onClick: openAndGo });
+
+    resetters.push(function () {
+      opened = false;
+      coverPivot.rotation.z = 0; // idle angle set at build time (never explicitly set, defaults to 0)
+    });
+
     return group;
   }
 
@@ -511,7 +563,7 @@
     function rippleAndGo() {
       if (clicked) return;
       clicked = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         navigateAfter('contact.html', 0);
         return;
       }
@@ -524,6 +576,15 @@
     }
 
     registerInteractive(group, group, { onClick: rippleAndGo });
+
+    resetters.push(function () {
+      clicked = false;
+      steamPuffs.forEach(function (puff, i) {
+        puff.position.set((i - 1) * 0.05, 0, 0);
+        puff.material.opacity = 0;
+      });
+    });
+
     return group;
   }
 
@@ -558,7 +619,7 @@
     function glintAndGo() {
       if (clicked) return;
       clicked = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         navigateAfter('accomplishments.html', 0);
         return;
       }
@@ -567,6 +628,13 @@
     }
 
     registerInteractive(group, group, { onClick: glintAndGo });
+
+    resetters.push(function () {
+      clicked = false;
+      goldMat.emissive.set(0x000000);
+      goldMat.emissiveIntensity = 1;
+    });
+
     return group;
   }
 
@@ -592,7 +660,7 @@
     function tiltAndGo() {
       if (clicked) return;
       clicked = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         group.rotation.x = idleRotX + 0.3;
         navigateAfter('gallery.html', 0);
         return;
@@ -602,6 +670,12 @@
     }
 
     registerInteractive(group, group, { onClick: tiltAndGo });
+
+    resetters.push(function () {
+      clicked = false;
+      group.rotation.x = idleRotX;
+    });
+
     return group;
   }
 
@@ -636,7 +710,7 @@
     function nodAndGo() {
       if (clicked) return;
       clicked = true;
-      if (reduceMotion) {
+      if (!canAnimate) {
         navigateAfter('about.html', 0);
         return;
       }
@@ -645,6 +719,12 @@
     }
 
     registerInteractive(group, group, { onClick: nodAndGo });
+
+    resetters.push(function () {
+      clicked = false;
+      group.rotation.z = 0;
+    });
+
     return group;
   }
 
@@ -689,7 +769,7 @@
   function setTheme(name) {
     if (!THEMES[name]) name = 'desk-lamp';
     document.documentElement.setAttribute('data-theme', name);
-    window.localStorage.setItem('resumeTheme', name);
+    try { window.localStorage.setItem('resumeTheme', name); } catch (e) { /* storage unavailable — theme still applies below */ }
     applyThemeToScene(name);
 
     var toggleBtn = document.getElementById('theme-toggle');
