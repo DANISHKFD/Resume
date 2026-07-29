@@ -67,6 +67,7 @@
   </header>
 
   <button id="theme-toggle" aria-pressed="false" type="button">Cyberpunk mode</button>
+  <button id="sound-toggle" aria-pressed="true" type="button">Sound: on</button>
 
   <nav id="corner-nav" aria-label="Section navigation">
     <button id="nav-toggle" aria-expanded="false" aria-controls="nav-list" type="button">
@@ -106,6 +107,29 @@
       try { window.localStorage.setItem('resumeTheme', next); } catch (e) { /* storage unavailable */ }
     }
   });
+
+  (function () {
+    var soundBtn = document.getElementById('sound-toggle');
+    var storedMuted = false;
+    try { storedMuted = window.localStorage.getItem('resumeSoundMuted') === 'true'; } catch (e) { storedMuted = false; }
+    soundBtn.setAttribute('aria-pressed', storedMuted ? 'false' : 'true');
+    soundBtn.textContent = storedMuted ? 'Sound: off' : 'Sound: on';
+
+    soundBtn.addEventListener('click', function () {
+      if (window.__resumeScene && window.__resumeScene.toggleSound) {
+        window.__resumeScene.toggleSound();
+        return;
+      }
+      // Fallback mirrors setTheme's fallback above, for the rare case scene.js
+      // hasn't finished loading yet when this is clicked.
+      var muted = false;
+      try { muted = window.localStorage.getItem('resumeSoundMuted') === 'true'; } catch (e) { muted = false; }
+      muted = !muted;
+      try { window.localStorage.setItem('resumeSoundMuted', muted ? 'true' : 'false'); } catch (e) { /* storage unavailable */ }
+      soundBtn.setAttribute('aria-pressed', muted ? 'false' : 'true');
+      soundBtn.textContent = muted ? 'Sound: off' : 'Sound: on';
+    });
+  })();
 </script>
 
 </body>

@@ -39,18 +39,18 @@
     'desk-lamp': {
       lampColor: 0xffb066,
       lampIntensity: 1.5,
-      ambientColor: 0x2a3040,
+      ambientColor: 0x362a1e,
       ambientIntensity: 0.85,
-      bgColor: 0x0a0c10,
-      deskColor: 0x2b2f38,
+      bgColor: 0x201812,
+      deskColor: 0x4a3626,
       fillColor: 0x8fa0bd
     },
     'cyberpunk': {
       lampColor: 0x1fe5f0,
       lampIntensity: 1.7,
-      ambientColor: 0x2a2410,
+      ambientColor: 0x342c10,
       ambientIntensity: 0.7,
-      bgColor: 0x08090a,
+      bgColor: 0x1c1a08,
       deskColor: 0x14140a,
       fillColor: 0x9a6fd0
     }
@@ -255,11 +255,85 @@
     if (evt.persisted) resetters.forEach(function (reset) { reset(); });
   });
 
+  // ---------- Interaction sound ----------
+  // Synthesized via Web Audio (oscillators + a noise buffer) rather than sound
+  // files — same "built from primitives, nothing external" spirit as the desk
+  // objects themselves. Every sound is a direct result of a click, so it never
+  // runs into autoplay restrictions and never surprises a visitor on page load.
+  var soundMuted = false;
+  try { soundMuted = window.localStorage.getItem('resumeSoundMuted') === 'true'; } catch (e) { soundMuted = false; }
+  var audioCtx = null;
+
+  function ensureAudioCtx() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { audioCtx = null; }
+    } else if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playTone(freq, duration, opts) {
+    if (soundMuted) return;
+    var ctx = ensureAudioCtx();
+    if (!ctx) return;
+    opts = opts || {};
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = opts.type || 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    if (opts.freqEnd) osc.frequency.exponentialRampToValueAtTime(Math.max(opts.freqEnd, 1), ctx.currentTime + duration);
+    var peak = opts.gain != null ? opts.gain : 0.1;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(peak, ctx.currentTime + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration + 0.02);
+  }
+
+  function playNoiseSwell(duration, freq) {
+    if (soundMuted) return;
+    var ctx = ensureAudioCtx();
+    if (!ctx) return;
+    var length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+    var buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < length; i++) { data[i] = (Math.random() * 2 - 1) * (1 - i / length); }
+    var noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    var filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = freq || 2200;
+    filter.Q.value = 0.7;
+    var gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    noise.connect(filter).connect(gain).connect(ctx.destination);
+    noise.start();
+  }
+
+  function playClick() { playTone(720, 0.06, { type: 'square', gain: 0.05, freqEnd: 420 }); }
+  function playTap() { playTone(520, 0.12, { type: 'sine', gain: 0.07, freqEnd: 340 }); }
+  function playChime() { playTone(1046, 0.35, { type: 'sine', gain: 0.09 }); playTone(1568, 0.3, { type: 'sine', gain: 0.045 }); }
+  function playPop(up) { playTone(up ? 300 : 220, 0.12, { type: 'sine', gain: 0.08, freqEnd: up ? 520 : 140 }); }
+  function playPaper() { playNoiseSwell(0.22, 2200); }
+  function playThud() { playTone(90, 0.18, { type: 'sine', gain: 0.12, freqEnd: 50 }); }
+
+  function setSoundMuted(muted) {
+    soundMuted = muted;
+    try { window.localStorage.setItem('resumeSoundMuted', muted ? 'true' : 'false'); } catch (e) { /* storage unavailable */ }
+  }
+
   var lampOn = true;
 
   function buildLamp() {
     var group = new THREE.Group();
-    group.position.set(2.1, -0.15, 1.2);
+    // y=0 matches the desk's actual top surface (BoxGeometry height 0.3 centered
+    // at y=-0.15 puts the top face at y=0) — not the desk mesh's own center y,
+    // which several objects here mistakenly copied, sinking them into the desk.
+    group.position.set(2.1, 0, 1.2);
 
     var baseMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.5, metalness: 0.6 });
     var base = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.1, 24), baseMat);
@@ -299,6 +373,7 @@
   }
 
   function toggleLamp() {
+    playClick();
     lampOn = !lampOn;
     var theme = THEMES[currentTheme];
     var targetLightIntensity = lampOn ? theme.lampIntensity : 0;
@@ -320,7 +395,7 @@
 
   function buildPlant() {
     var group = new THREE.Group();
-    group.position.set(-3.4, -0.15, 0.6);
+    group.position.set(-3.4, 0, 0.6); // y=0 is the desk's top surface, see buildLamp
 
     var potMat = new THREE.MeshStandardMaterial({ color: 0x3a2a20, roughness: 0.8 });
     var pot = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.28, 0.5, 16), potMat);
@@ -343,6 +418,7 @@
 
     registerInteractive(group, group, {
       onClick: function () {
+        playPaper();
         if (!canAnimate) return;
         gsap.to(leaves.rotation, {
           z: leaves.rotation.z + 0.18, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut'
@@ -354,7 +430,7 @@
 
   function buildDuck() {
     var group = new THREE.Group();
-    group.position.set(-1.6, -0.15, 1.6);
+    group.position.set(-1.6, 0, 1.6); // y=0 is the desk's top surface, see buildLamp
 
     var duckMat = new THREE.MeshStandardMaterial({ color: 0xf5c518, roughness: 0.5 });
     var body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 20, 16), duckMat);
@@ -383,6 +459,7 @@
 
     registerInteractive(group, body, {
       onClick: function () {
+        playPop(true);
         if (!canAnimate) return;
         gsap.timeline()
           .to(group.scale, { y: 0.6, duration: 0.1, ease: 'power1.in' })
@@ -416,12 +493,19 @@
       onClick: function () {
         if (fallen) return;
         fallen = true;
+        playTap();
+        // Desk half-width is 4.2 on x (BoxGeometry(8.4,...)) — the fall must clear
+        // that edge horizontally before dropping in y, or the pen visually sinks
+        // through the solid desk slab instead of tumbling off its side.
         if (!canAnimate) {
-          group.position.set(3.6, -1.6, -1.6);
+          group.position.set(4.7, -1.6, -1.8);
           group.rotation.set(2.2, 1.1, 3.4);
+          playThud();
           return;
         }
-        gsap.to(group.position, { x: 3.6, y: -1.6, z: -1.6, duration: 0.7, ease: 'power2.in' });
+        gsap.timeline()
+          .to(group.position, { x: 4.5, z: -1.5, duration: 0.25, ease: 'power1.out' })
+          .to(group.position, { x: 4.7, y: -1.6, z: -1.8, duration: 0.45, ease: 'power2.in', onComplete: playThud });
         gsap.to(group.rotation, { x: 2.2, y: 1.1, z: 3.4, duration: 0.7, ease: 'power1.in' });
       }
     });
@@ -442,11 +526,14 @@
 
     var baseMat = new THREE.MeshStandardMaterial({ color: 0x4a4d52, roughness: 0.4, metalness: 0.5 });
     var base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 1.0), baseMat);
-    base.position.y = 0.03;
+    // group.position.y is -0.15 (the shared desk-surface baseline); +0.18 here
+    // puts the base's bottom face flush with the desk's actual top surface (y=0)
+    // instead of half-submerged in it.
+    base.position.y = 0.18;
     group.add(base);
 
     var hinge = new THREE.Group();
-    hinge.position.set(0, 0.06, -0.48);
+    hinge.position.set(0, 0.21, -0.48); // raised to match base's new resting height
     group.add(hinge);
 
     var screenMat = new THREE.MeshStandardMaterial({ color: 0x3a3d42, roughness: 0.4, metalness: 0.5 });
@@ -468,6 +555,7 @@
     function openAndGo() {
       if (opened) return;
       opened = true;
+      playClick();
       if (!canAnimate) {
         hinge.rotation.x = -1.75;
         glowMat.emissiveIntensity = 1;
@@ -492,7 +580,7 @@
 
   function buildNotebook() {
     var group = new THREE.Group();
-    group.position.set(1.1, -0.15, 1.4);
+    group.position.set(1.1, 0, 1.4); // y=0 is the desk's top surface, see buildLamp
     var opened = false;
 
     var coverMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.7 });
@@ -512,6 +600,7 @@
     function openAndGo() {
       if (opened) return;
       opened = true;
+      playPaper();
       if (!canAnimate) {
         coverPivot.rotation.z = Math.PI * 0.85;
         navigateAfter('education.html', 0);
@@ -533,7 +622,7 @@
 
   function buildMug() {
     var group = new THREE.Group();
-    group.position.set(-0.9, -0.15, 1.5);
+    group.position.set(-0.9, 0, 1.5); // y=0 is the desk's top surface, see buildLamp
     var clicked = false;
 
     var mugMat = new THREE.MeshStandardMaterial({ color: 0xe7e2d8, roughness: 0.5 });
@@ -563,6 +652,7 @@
     function rippleAndGo() {
       if (clicked) return;
       clicked = true;
+      playTap();
       if (!canAnimate) {
         navigateAfter('contact.html', 0);
         return;
@@ -590,7 +680,7 @@
 
   function buildTrophy() {
     var group = new THREE.Group();
-    group.position.set(-2.6, -0.15, -1.1);
+    group.position.set(-2.6, 0, -1.1); // y=0 is the desk's top surface, see buildLamp
     var clicked = false;
 
     var goldMat = new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.3, metalness: 0.85 });
@@ -619,6 +709,7 @@
     function glintAndGo() {
       if (clicked) return;
       clicked = true;
+      playChime();
       if (!canAnimate) {
         navigateAfter('accomplishments.html', 0);
         return;
@@ -660,6 +751,7 @@
     function tiltAndGo() {
       if (clicked) return;
       clicked = true;
+      playTap();
       if (!canAnimate) {
         group.rotation.x = idleRotX + 0.3;
         navigateAfter('gallery.html', 0);
@@ -681,7 +773,7 @@
 
   function buildFigurine() {
     var group = new THREE.Group();
-    group.position.set(2.6, -0.15, -1.6);
+    group.position.set(2.6, 0, -1.6); // y=0 is the desk's top surface, see buildLamp
     var clicked = false;
 
     var mat = new THREE.MeshStandardMaterial({ color: 0x6ea8ae, roughness: 0.6 });
@@ -710,6 +802,7 @@
     function nodAndGo() {
       if (clicked) return;
       clicked = true;
+      playClick();
       if (!canAnimate) {
         navigateAfter('about.html', 0);
         return;
@@ -784,4 +877,17 @@
   }
 
   window.__resumeScene.setTheme = setTheme;
+
+  function toggleSound() {
+    setSoundMuted(!soundMuted);
+    var soundBtn = document.getElementById('sound-toggle');
+    if (soundBtn) {
+      soundBtn.setAttribute('aria-pressed', soundMuted ? 'false' : 'true');
+      soundBtn.textContent = soundMuted ? 'Sound: off' : 'Sound: on';
+    }
+    if (!soundMuted) playClick(); // audible confirmation that sound just turned back on
+  }
+
+  window.__resumeScene.toggleSound = toggleSound;
+  window.__resumeScene.isSoundMuted = function () { return soundMuted; };
 })();
