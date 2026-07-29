@@ -1,0 +1,128 @@
+/* Theme tokens for the 3D desk-scene resume.
+   "Desk Lamp" is the default, always-on-load theme.
+   "Cyberpunk" is an opt-in override toggled at runtime — see scene.js setTheme(). */
+
+:root,
+:root[data-theme="desk-lamp"] {
+  --bg: #0A0C10;
+  --bg-raised: #12151C;
+  --panel-bg: #14171Fee;
+  --ink: #EDEAE0;
+  --ink-dim: #8B8F98;
+  --rail: #262B35;
+  --accent: #D9A441;      /* brass lamp light */
+  --accent-ink: #0A0C10;
+  --accent-2: #6EA8AE;    /* slate-cyan secondary */
+  --thread-amber: #F2A93B;
+  --thread-blue: #3FA7FF;
+  --thread-violet: #C05CFF;
+  --thread-teal: #33D6A6;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+:root[data-theme="cyberpunk"] {
+  --bg: #08090A;
+  --bg-raised: #101008;
+  --panel-bg: #0C0C0Cee;
+  --ink: #F5F3E7;
+  --ink-dim: #B8B49A;
+  --rail: #33330F;
+  --accent: #FCEE0A;      /* hazard yellow */
+  --accent-ink: #08090A;
+  --accent-2: #1FE5F0;    /* glitch cyan */
+  --thread-amber: #FCEE0A;
+  --thread-blue: #1FE5F0;
+  --thread-violet: #1FE5F0;
+  --thread-teal: #FCEE0A;
+  --font-display: 'Chakra Petch', sans-serif;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  transition: background-color .4s ease, color .4s ease;
+}
+
+a{ color:inherit; text-decoration:none; }
+a:focus-visible, button:focus-visible{ outline:2px solid var(--accent-2); outline-offset:3px; }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+/* ---------- Corner nav (present + functional on every page) ---------- */
+#corner-nav{
+  position:fixed; top:20px; right:20px; z-index:200;
+  font-family:var(--font-mono); font-size:13px;
+}
+#nav-toggle{
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--rail); background:var(--bg-raised); color:var(--ink);
+}
+#nav-list{
+  list-style:none; position:absolute; top:52px; right:0;
+  background:var(--bg-raised); border:1px solid var(--rail);
+  min-width:220px; padding:10px;
+  max-height:0; opacity:0; overflow:hidden; pointer-events:none;
+  transition: max-height .3s ease, opacity .2s ease;
+}
+#corner-nav.is-open #nav-list,
+#nav-list:focus-within{
+  /* Matches the real 7-link content height (7 * ~38px + padding) rather than an
+     arbitrary large ceiling, so the eased transition tracks actual motion instead
+     of easing across a mostly-empty range. */
+  max-height:320px; opacity:1; pointer-events:auto;
+}
+#nav-list a{
+  display:block; padding:10px 8px; color:var(--ink-dim); letter-spacing:.03em;
+}
+#nav-list a:hover, #nav-list a:focus-visible{ color:var(--accent); }
+
+/* ---------- Theme toggle ---------- */
+#theme-toggle{
+  position:fixed; top:20px; left:20px; z-index:200;
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase;
+  padding:11px 16px; border-radius:22px;
+  border:1px solid var(--rail); background:var(--bg-raised); color:var(--ink-dim);
+}
+#theme-toggle:hover{ color:var(--accent); border-color:var(--accent); }
+
+/* ---------- Fallback card (shown only when WebGL/Three.js unavailable) ---------- */
+#fallback{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:18px; text-align:center; padding:40px 24px;
+  overflow-y:auto;
+}
+#fallback h1{ font-family:var(--font-display); font-size:clamp(28px,5vw,48px); }
+#fallback p{ color:var(--ink-dim); max-width:52ch; }
+#fallback[hidden]{ display:none; }
+
+/* ---------- Glitch flicker (Cyberpunk theme-switch acknowledgement) ---------- */
+@keyframes theme-glitch{
+  0%, 100% { transform:translate(0,0); opacity:1; }
+  20% { transform:translate(-2px,1px); opacity:.85; }
+  40% { transform:translate(2px,-1px); opacity:1; }
+  60% { transform:translate(-1px,0); opacity:.9; }
+  80% { transform:translate(1px,1px); opacity:1; }
+}
+.theme-glitching{ animation: theme-glitch .35s steps(2) 2; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+
+@media (max-width:720px){
+  .hero-overlay{ top:36px; }
+  .hero-overlay h1{ font-size:clamp(26px,8vw,40px); }
+  .tagline{ font-size:13px; padding:0 8px; }
+  #theme-toggle{ top:auto; bottom:20px; left:20px; font-size:11px; padding:9px 12px; }
+  #corner-nav{ top:16px; right:16px; }
+  .scene-hint{ bottom:84px; }
+}

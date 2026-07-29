@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-29T00:00:00.000Z",
+  "title": "Design System: Danish Ahmed N F — Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Near-Black Room",
+        "canonical": "#0A0C10",
+        "tonalRamp": ["#181C26", "#2E374A", "#44526D", "#5B6D91", "#7A8BAC", "#9EAAC2", "#C2CAD9", "#E6E9EF"]
+      },
+      "bg-raised": {
+        "role": "neutral",
+        "displayName": "Near-Black Room (raised)",
+        "canonical": "#12151C",
+        "tonalRamp": ["#181C25", "#2F3749", "#46516C", "#5C6C90", "#7C8AAB", "#9FA9C1", "#C3C9D8", "#E6E9EF"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Warm Parchment Ink",
+        "canonical": "#EDEAE0",
+        "tonalRamp": ["#272316", "#4C442C", "#706641", "#958757", "#B0A377", "#C5BC9B", "#DBD5C0", "#F0EEE5"]
+      },
+      "ink-dim": {
+        "role": "neutral",
+        "displayName": "Steel Dim",
+        "canonical": "#8B8F98",
+        "tonalRamp": ["#1D1E20", "#383A3F", "#54575E", "#6F737D", "#8D919A", "#ACAFB5", "#CBCCD0", "#E9EAEC"]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "canonical": "#262B35",
+        "tonalRamp": ["#1A1D24", "#323846", "#4A5468", "#637089", "#818DA5", "#A3ACBD", "#C5CBD6", "#E7E9EE"]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Brass Lamp Light",
+        "canonical": "#D9A441",
+        "cyberpunkVariant": "#FCEE0A (Hazard Yellow)",
+        "tonalRamp": ["#33250A", "#644814", "#946B1E", "#C58E27", "#DBA94B", "#E5C07C", "#EED7AC", "#F8EFDD"]
+      },
+      "accent-2": {
+        "role": "primary",
+        "displayName": "Slate Cyan",
+        "canonical": "#6EA8AE",
+        "cyberpunkVariant": "#1FE5F0 (Glitch Cyan)",
+        "tonalRamp": ["#162627", "#2B494D", "#406D72", "#559197", "#75ACB2", "#9AC2C7", "#BFD9DB", "#E5EFF0"]
+      },
+      "thread-amber": {
+        "role": "secondary",
+        "displayName": "Signal Amber (Programming)",
+        "canonical": "#F2A93B",
+        "cyberpunkVariant": "#FCEE0A",
+        "tonalRamp": ["#392404", "#704607", "#A7690B", "#DD8B0F", "#F2A635", "#F5BE6B", "#F9D6A2", "#FCEED9"]
+      },
+      "thread-blue": {
+        "role": "secondary",
+        "displayName": "Signal Blue (Web & Backend)",
+        "canonical": "#3FA7FF",
+        "cyberpunkVariant": "#1FE5F0",
+        "tonalRamp": ["#00213D", "#004177", "#0060B2", "#0080EC", "#279CFF", "#62B7FF", "#9CD2FF", "#D6ECFF"]
+      },
+      "thread-violet": {
+        "role": "secondary",
+        "displayName": "Signal Violet (Data & ML)",
+        "canonical": "#C05CFF",
+        "cyberpunkVariant": "#1FE5F0",
+        "tonalRamp": ["#26003D", "#490077", "#6D00B2", "#9100EC", "#AC27FF", "#C262FF", "#D99CFF", "#EFD6FF"]
+      },
+      "thread-teal": {
+        "role": "secondary",
+        "displayName": "Signal Teal (Databases & Tools)",
+        "canonical": "#33D6A6",
+        "cyberpunkVariant": "#FCEE0A",
+        "tonalRamp": ["#0A3327", "#14634C", "#1E9471", "#28C596", "#4BDBB1", "#7CE5C6", "#ACEEDB", "#DDF8F0"]
+      }
+    },
+    "typographyMeta": {
+      "hero": { "displayName": "Hero", "purpose": "index.html's headline only, one instance." },
+      "panel-title": { "displayName": "Panel Title", "purpose": "Each destination page's single h1." },
+      "panel-subtitle": { "displayName": "Panel Subtitle", "purpose": "h2 inside a panel — Experience, Skills, Education." },
+      "hero-cyberpunk": { "displayName": "Hero (Cyberpunk)", "purpose": "The same Hero role, Chakra Petch instead of Fraunces — the display face is theme-bound, not just its color." },
+      "eyebrow": { "displayName": "Eyebrow", "purpose": "Small mono label above every panel title and the hero location line." },
+      "body": { "displayName": "Body", "purpose": "All panel prose, ~70ch max measure." },
+      "readout": { "displayName": "Readout", "purpose": "Nav links, tags, dates, theme-toggle and menu-button labels. Always IBM Plex Mono." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "lamp-toggle", "value": "gsap.to, duration 0.5s, ease power2.out", "purpose": "Lamp click: light intensity, ambient intensity, and bulb emissive animate together to the new on/off state." },
+      { "name": "doorway-approach", "value": "gsap.to on the object's own geometry (rotation/position/emissive), 0.4-0.7s, then navigateAfter() 500-650ms later", "purpose": "Every doorway object plays its full in-character animation before the page navigates, so the click always reads as causing something rather than an instant blank nav." },
+      { "name": "decorative-tap", "value": "gsap.to / gsap.timeline, 0.15-0.8s, mostly yoyo/repeat", "purpose": "Plant sway, duck squash-bounce, pen fall, trophy glint — non-navigating desk objects' idle reactions to a click." },
+      { "name": "camera-parallax", "value": "lerp 0.04/frame toward mouse-driven target, max 0.6 units x / 0.3 units y", "purpose": "Subtle camera drift toward the cursor; the scene's ambient 'alive' motion, independent of any click." },
+      { "name": "theme-glitch", "value": "CSS keyframes, translate+opacity, .35s steps(2) x2", "purpose": "Brief flicker on the hero headline acknowledging a theme switch." },
+      { "name": "panel-in", "value": "CSS keyframes, opacity+translateY(18px), .5s ease", "purpose": "Destination-page panel entrance on load." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Theme Toggle",
+      "kind": "button",
+      "refersTo": "theme-toggle",
+      "description": "Pill-shaped control, fixed top-left on index.html, switching between Desk Lamp and Cyberpunk.",
+      "html": "<button class=\"ds-theme-toggle\" type=\"button\" aria-pressed=\"false\">Cyberpunk mode</button>",
+      "css": ".ds-theme-toggle{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; padding:11px 16px; border-radius:22px; border:1px solid #262B35; background:#12151C; color:#8B8F98; cursor:pointer; transition:color .2s ease, border-color .2s ease; } .ds-theme-toggle:hover, .ds-theme-toggle:focus-visible{ color:#D9A441; border-color:#D9A441; outline:none; }"
+    },
+    {
+      "name": "Circle Icon Button",
+      "kind": "button",
+      "refersTo": "panel-close",
+      "description": "The 44x44 circular control used both as the corner-nav Menu button and every destination page's back-to-desk close button.",
+      "html": "<button class=\"ds-circle-btn\" type=\"button\" aria-label=\"Back to desk\">×</button>",
+      "css": ".ds-circle-btn{ width:44px; height:44px; border-radius:50%; border:1px solid #262B35; background:#12151C; color:#EDEAE0; font-size:18px; line-height:1; cursor:pointer; transition:color .2s ease, border-color .2s ease; } .ds-circle-btn:hover{ color:#D9A441; border-color:#D9A441; }"
+    },
+    {
+      "name": "Corner Nav Dropdown",
+      "kind": "nav",
+      "refersTo": "corner-nav",
+      "description": "The Menu button's expanding link list. Opens on click OR on keyboard focus landing inside it (:focus-within), so Tab users never need to activate the button.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-circle-btn\" aria-expanded=\"false\">Menu</button><ul class=\"ds-nav-list ds-nav-list--open\"><li><a href=\"#\">About</a></li><li><a href=\"#\">Projects</a></li><li><a href=\"#\">Contact</a></li></ul></nav>",
+      "css": ".ds-nav{ position:relative; font-family:'IBM Plex Mono',monospace; font-size:13px; } .ds-nav-list{ list-style:none; margin:0; position:absolute; top:52px; right:0; background:#12151C; border:1px solid #262B35; min-width:220px; padding:10px; max-height:0; opacity:0; overflow:hidden; pointer-events:none; transition:max-height .3s ease, opacity .2s ease; } .ds-nav-list--open{ max-height:320px; opacity:1; pointer-events:auto; } .ds-nav-list a{ display:block; padding:10px 8px; color:#8B8F98; letter-spacing:0.03em; text-decoration:none; } .ds-nav-list a:hover, .ds-nav-list a:focus-visible{ color:#D9A441; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Content container used in the Projects, Accomplishments, and Gallery grids. Barely-rounded (4px) so it reads as an index card, not a soft app tile.",
+      "html": "<div class=\"ds-card\"><h3>Coimbatore Quiz Club</h3><span class=\"ds-tag\">Member</span></div>",
+      "css": ".ds-card{ border:1px solid #262B35; background:#12151C; padding:20px; border-radius:4px; } .ds-card h3{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; margin:0 0 8px; color:#EDEAE0; } .ds-tag{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8B8F98; display:block; margin-top:10px; }"
+    },
+    {
+      "name": "Fact Row",
+      "kind": "custom",
+      "refersTo": "fact-row",
+      "description": "A lighter-weight alternative to the Card for single-fact content (About's bio facts, Education's degree list): border-bottom only, a mono uppercase accent label above a plain value.",
+      "html": "<div class=\"ds-fact-row\"><strong>Currently</strong><span>MSc Information Technology, Sri Ramakrishna College of Arts &amp; Science (2025–27)</span></div>",
+      "css": ".ds-fact-row{ display:flex; flex-direction:column; gap:6px; padding:16px 0; border-bottom:1px solid #262B35; } .ds-fact-row strong{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:#D9A441; } .ds-fact-row span{ font-family:'Inter',sans-serif; color:#EDEAE0; }"
+    },
+    {
+      "name": "Panel Header",
+      "kind": "custom",
+      "refersTo": "panel-eyebrow",
+      "description": "Every destination page opens with the same eyebrow + h1 pairing — the panel register's one repeated structural element.",
+      "html": "<span class=\"ds-eyebrow\">Projects</span><h1 class=\"ds-panel-title\">Real, deployed, verifiable.</h1>",
+      "css": ".ds-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.09em; text-transform:uppercase; color:#8B8F98; display:block; margin-bottom:10px; } .ds-panel-title{ font-family:'Fraunces',serif; font-weight:700; font-size:clamp(30px,5vw,52px); color:#EDEAE0; margin:0 0 28px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Desk, After Hours",
+    "overview": "The homepage is not a page you scroll — it is a desk you sit down at. A single warm desk lamp lights a real-time 3D scene (Three.js), and every object on the desk is a working part of the resume: click the laptop and it opens, lights up, and carries you to Projects; click the notebook and its cover swings open into Education; nudge the coffee mug and its steam rises on the way to Contact. Ten objects, six of them doorways, four of them purely tactile (the lamp, the plant, a rubber duck, a pen that topples if you flick it) — because a desk that only had \"buttons shaped like resume sections\" on it would just be a nav bar wearing a costume. The clutter is the point: a duck and a trophy and a photo frame are what make it a desk, not a menu.\n\nThe whole scene runs on one light source with a story: the desk lamp itself. Toggle it and the ambient level drops with it — turning the lamp off is not a decorative dim, it changes what the point light in the scene is actually doing. A quiet, cool directional fill from the opposite corner keeps the far side of the desk from disappearing into true black, but it never competes with the lamp for \"what's the light source here\" — it reads as moonlight through a window, not a second lamp.\n\nThis replaced \"The Data Line,\" a transit-schematic direction (skill categories as colored subway lines, projects as interchange stations) that the user found didn't fit. Where the Data Line proved versatility through infrastructure metaphor, the Desk proves the same thing through physical evidence: a workspace with real tools on it.",
+    "keyCharacteristics": [
+      "One warm point-light source (the desk lamp) drives the entire scene's mood; every other light is subordinate to it — a fill light lifts shadow, it never rivals the lamp as a second highlight.",
+      "Ten physical objects, not ten buttons: each animates in character before it acts — the motion is the affordance, discovered by hovering/clicking, not labeled with a tooltip.",
+      "A second full theme — Cyberpunk — recolors the same scene and the same seven pages by swapping CSS custom properties and the Three.js light/material colors together, off one localStorage flag.",
+      "The typeface changes with the light: Fraunces (Desk Lamp) swaps to Chakra Petch (Cyberpunk) — the theme toggle changes the page's handwriting, not just its color.",
+      "Destination pages never pretend to be the desk scene continuing — a distinct 'panel' register (sliding card over a blurred gradient echo of the desk's palette), because re-rendering the full 3D scene on every content page would cost more than it would earn."
+    ],
+    "rules": [
+      { "name": "The One Lamp Rule", "body": "Only one light in the 3D scene is allowed to read as \"the light source\": the desk lamp. A fill light may lift shadow so nothing goes pure-black-unclickable, but it is a directional, low-intensity, room-ambient light — never a second point light competing for \"where is this scene lit from.\"", "section": "colors" },
+      { "name": "The Theme-Is-The-Light Rule", "body": "Desk Lamp and Cyberpunk are not two color swaps layered on one fixed scene — the Three.js point-light color, the ambient color, the desk material color, and every CSS token change together off the same stored flag. A component that only reskins in CSS but ignores the WebGL lighting has not actually implemented the theme.", "section": "colors" },
+      { "name": "The Theme-Bound Type Rule", "body": "The display typeface is not a static brand choice — it is bound to data-theme the same way color is. Any new heading-level element must inherit var(--font-display) rather than hard-coding a family, or it will silently stay Fraunces after a Cyberpunk switch.", "section": "typography" },
+      { "name": "The Real Depth Rule", "body": "Depth is either genuinely three-dimensional (the WebGL scene) or genuinely flat (a 1px border, a background step) — never a CSS shadow standing in for depth that isn't there.", "section": "elevation" },
+      { "name": "The Label Decides The Curve Rule", "body": "An icon-only control is a circle; a labeled control is a pill; a content container is a barely-rounded card. The radius is chosen by what the element is, not picked once and reused everywhere.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do keep the desk lamp as the scene's only true light source — the One Lamp Rule.",
+      "Do update the Three.js light/material colors and the CSS custom properties together on every theme switch — the Theme-Is-The-Light Rule.",
+      "Do let the display typeface itself change with the theme, not just its color — the Theme-Bound Type Rule.",
+      "Do give every clickable desk object its own in-character animation before it acts; the motion is the affordance.",
+      "Do gate every scene animation (and the doorway navigation delay) on prefers-reduced-motion.",
+      "Do choose radius by what the control is (icon-only → circle, labeled → pill, container → card), not by habit."
+    ],
+    "donts": [
+      "Don't add a second light to the 3D scene that competes with the lamp for \"where is this scene lit from\"; a fill light stays subordinate and directional.",
+      "Don't add a CSS drop-shadow anywhere in the 2D chrome — depth is either the real WebGL scene or a flat 1px border, never a faked shadow.",
+      "Don't turn a desk object into a plain button; it must animate in its own physical character before any navigation happens.",
+      "Don't re-render the full Three.js scene on destination pages — the panel backdrop is a deliberate lightweight gradient echo, not a missing feature.",
+      "Don't hard-code a display font family on a new heading; inherit var(--font-display) so it stays theme-bound."
+    ]
+  }
+}
