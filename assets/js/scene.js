@@ -38,21 +38,21 @@
   var THEMES = {
     'desk-lamp': {
       lampColor: 0xffb066,
-      lampIntensity: 1.35,
-      ambientColor: 0x1a1f2b,
-      ambientIntensity: 0.4,
+      lampIntensity: 1.5,
+      ambientColor: 0x2a3040,
+      ambientIntensity: 0.85,
       bgColor: 0x0a0c10,
       deskColor: 0x2b2f38,
-      fillColor: 0x3a5a7a
+      fillColor: 0x8fa0bd
     },
     'cyberpunk': {
       lampColor: 0x1fe5f0,
-      lampIntensity: 1.6,
-      ambientColor: 0x141400,
-      ambientIntensity: 0.3,
+      lampIntensity: 1.7,
+      ambientColor: 0x2a2410,
+      ambientIntensity: 0.7,
       bgColor: 0x08090a,
       deskColor: 0x14140a,
-      fillColor: 0x4a1a6a
+      fillColor: 0x9a6fd0
     }
   };
 
@@ -103,17 +103,17 @@
     ambientLight = new THREE.AmbientLight(theme.ambientColor, theme.ambientIntensity);
     scene.add(ambientLight);
 
-    lampLight = new THREE.PointLight(theme.lampColor, theme.lampIntensity, 14, 2);
+    lampLight = new THREE.PointLight(theme.lampColor, theme.lampIntensity, 20, 1.5);
     lampLight.position.set(2.1, 3.6, 1.2);
     lampLight.castShadow = true;
     lampLight.shadow.mapSize.set(1024, 1024);
     scene.add(lampLight);
 
-    // Cool, dim fill from the opposite corner — keeps the desk lamp as the one
-    // dramatic light source while lifting the far side of the desk (trophy, frame,
-    // figurine) out of near-total black, so every clickable object stays findable.
+    // Neutral fill from the opposite corner — keeps the desk lamp as the visual
+    // focal point while lifting the far side of the desk (trophy, frame, figurine)
+    // to a legible brightness, so every clickable object stays findable at a glance.
     // Independent of the lamp toggle: it reads as ambient room light, not the lamp.
-    fillLight = new THREE.DirectionalLight(theme.fillColor, 0.55);
+    fillLight = new THREE.DirectionalLight(theme.fillColor, 1.1);
     fillLight.position.set(-5, 6, -4);
     scene.add(fillLight);
 
