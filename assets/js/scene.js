@@ -347,9 +347,19 @@
     var armPivot = new THREE.Group();
     armPivot.position.set(0, 3.4, 0);
     group.add(armPivot);
-    var arm = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.4, 12), poleMat);
-    arm.rotation.z = Math.PI / 2.6;
-    arm.position.set(0.55, 0.28, 0);
+
+    // The arm used to be positioned with a fixed offset (0.55, 0.28, 0) after a
+    // fixed rotation, which doesn't correspond to "start at the pivot and reach
+    // the head" for any single position/rotation pair — the arm rendered as a
+    // stick floating away from the pole's top, not connected to it. Deriving the
+    // arm's transform from the actual pivot->head direction guarantees the near
+    // end sits at the pivot regardless of where the head is placed.
+    var headLocalPos = new THREE.Vector3(1.05, 0.5, 0); // relative to armPivot
+    var armDir = headLocalPos.clone().normalize();
+    var armLength = 1.4;
+    var arm = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, armLength, 12), poleMat);
+    arm.position.copy(armDir.clone().multiplyScalar(armLength / 2));
+    arm.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), armDir);
     armPivot.add(arm);
 
     lampBulbMat = new THREE.MeshStandardMaterial({
@@ -357,7 +367,7 @@
     });
     var head = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.5, 20, 1, true), lampBulbMat);
     head.rotation.x = Math.PI;
-    head.position.set(1.05, 0.5, 0);
+    head.position.copy(headLocalPos);
     armPivot.add(head);
 
     deskGroup.add(group);
@@ -557,12 +567,10 @@
       opened = true;
       playClick();
       if (!canAnimate) {
-        hinge.rotation.x = -1.75;
         glowMat.emissiveIntensity = 1;
         navigateAfter('projects.html', 0);
         return;
       }
-      gsap.to(hinge.rotation, { x: -1.75, duration: 0.55, ease: 'power2.out' });
       gsap.to(glowMat, { emissiveIntensity: 1, duration: 0.4, delay: 0.15 });
       navigateAfter('projects.html', 650);
     }
@@ -571,7 +579,6 @@
 
     resetters.push(function () {
       opened = false;
-      hinge.rotation.x = -0.35; // idle angle set at build time
       glowMat.emissiveIntensity = 0;
     });
 
@@ -587,17 +594,23 @@
     group.position.set(0.6, 0, 1.4); // y=0 is the desk's top surface, see buildLamp
     var opened = false;
 
-    var coverMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.7 });
-    var coverPivot = new THREE.Group();
-    var cover = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.04, 1.0), coverMat);
-    cover.position.set(0.375, 0, 0);
-    coverPivot.add(cover);
-    group.add(coverPivot);
-
+    // pages bottom used to sit at y=-0.01 — just below the desk's actual top
+    // surface (y=0, see buildLamp) — so the two meshes overlapped and z-fought
+    // right where the notebook touches the desk. Raised so pages/cover/desk each
+    // have a clean, non-overlapping seam: pages rest just above the desk, and the
+    // cover's pivot sits exactly on the pages' top face rather than through it.
     var pageMat = new THREE.MeshStandardMaterial({ color: 0xEFEAE0, roughness: 0.9 });
     var pages = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.03, 1.0), pageMat);
-    pages.position.set(0, 0.005, 0);
+    pages.position.set(0, 0.02, 0);
     group.add(pages);
+
+    var coverMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.7 });
+    var coverPivot = new THREE.Group();
+    coverPivot.position.set(0, 0.035, 0); // pages' top face (0.02 + half-height 0.015)
+    var cover = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.04, 1.0), coverMat);
+    cover.position.set(0.375, 0.02, 0); // half of cover's own height, resting on the pivot line
+    coverPivot.add(cover);
+    group.add(coverPivot);
 
     deskGroup.add(group);
 
