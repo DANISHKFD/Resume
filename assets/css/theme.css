@@ -113,3 +113,12 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
 }
+
+@media (max-width:720px){
+  .hero-overlay{ top:36px; }
+  .hero-overlay h1{ font-size:clamp(26px,8vw,40px); }
+  .tagline{ font-size:13px; padding:0 8px; }
+  #theme-toggle{ top:auto; bottom:20px; left:20px; font-size:11px; padding:9px 12px; }
+  #corner-nav{ top:16px; right:16px; }
+  .scene-hint{ bottom:84px; }
+}
