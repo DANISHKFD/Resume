@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="desk-lamp">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projects — Danish Ahmed N F</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/panel.css">
+<style>
+  .proj{ padding:22px 0; border-bottom:1px solid var(--rail); }
+  .proj h3{ font-family:var(--font-display); font-size:20px; color:var(--ink); margin-bottom:8px; }
+  .proj p{ margin-bottom:10px; }
+  .proj .tags{ font-family:var(--font-mono); font-size:12px; color:var(--ink-dim); display:block; margin-bottom:8px; }
+</style>
+</head>
+<body class="panel-page">
+<div class="panel-backdrop"></div>
+<button id="panel-close" class="panel-close" type="button" aria-label="Back to desk">×</button>
+
+<nav id="corner-nav" aria-label="Section navigation">
+  <button id="nav-toggle" aria-expanded="false" aria-controls="nav-list" type="button">Menu<span class="sr-only"> (section navigation)</span></button>
+  <ul id="nav-list">
+    <li><a href="about.html">About</a></li>
+    <li><a href="education.html">Education &amp; Skills</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="accomplishments.html">Accomplishments</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="Danish%20ahmed%20N%20F%20Resume.pdf" target="_blank" rel="noopener">Resume PDF ↗<span class="sr-only"> (opens in new tab)</span></a></li>
+  </ul>
+</nav>
+
+<main class="panel" style="max-width:920px;">
+  <span class="panel-eyebrow">Projects</span>
+  <h1>Real, deployed, verifiable.</h1>
+
+  <div class="proj">
+    <h3>RBI Banking Infrastructure &amp; Digital Payments Analytics Platform</h3>
+    <p>Full-stack analytics platform ingesting RBI's monthly banking statistics (ATM, PoS,
+    card, digital payments) through a structural ETL pipeline into PostgreSQL, served via a
+    Flask API to a React dashboard. The parser validates every import against RBI's own
+    published totals with no code changes needed for future months. Includes JWT auth with
+    role-based access, bank comparison/ranking tools, and market-concentration analytics.
+    Validated against RBI's April 2026 data: 63 banks, all 26 metrics reconciled exactly.</p>
+    <span class="tags">React · Flask · PostgreSQL · Docker · JWT — Web &amp; Backend / Databases &amp; Tools</span>
+    <a class="inline-link" href="https://rbi-card-usage-analytics.vercel.app" target="_blank" rel="noopener">View live →<span class="sr-only"> (opens in new tab)</span></a>
+  </div>
+
+  <div class="proj">
+    <h3>Unified Dashboard — Election Data Hub</h3>
+    <p>Static web dashboard visualizing self-declared financial data (bank accounts, assets,
+    loans) of State Legislative Assembly candidates across India, sourced from Election
+    Commission affidavit filings via MyNeta. Covers 15 states/UTs live with 15,000+ candidate
+    records indexed across 28+ states, with an interactive state-wise map, constituency
+    drill-downs, and party/bank-level views.</p>
+    <span class="tags">HTML · CSS · JavaScript — Programming</span>
+    <a class="inline-link" href="https://danishkfd.github.io/Unified-Dashboard/hub.html" target="_blank" rel="noopener">View live →<span class="sr-only"> (opens in new tab)</span></a>
+  </div>
+
+  <div class="proj">
+    <h3>GemTutor</h3>
+    <p>Full-stack RAG-powered chatbot answering Maths, Science, and Social Science questions
+    using Samacheer Kalvi textbook content. A retrieval pipeline built on Sentence
+    Transformers embeddings and a FAISS vector index fetches relevant textbook chunks, then
+    generates grounded answers via the Google Gemini API through subject-aware prompts, with
+    simple/detailed explanation modes and a one-click "simplify" feature for re-explaining
+    answers in easier language.</p>
+    <span class="tags">Python · Flask · FAISS · Sentence Transformers · Gemini API — Programming / Web &amp; Backend / Data &amp; ML</span>
+  </div>
+
+  <div class="proj">
+    <h3>Satellite Map Classification &amp; Image Captioning</h3>
+    <p>Two-stage deep learning pipeline on the DeepGlobe land-cover dataset: a DeepLabV3+
+    segmentation model (ResNet-50 encoder, ImageNet-pretrained) trained in PyTorch to
+    classify satellite imagery into six land-cover classes, integrated with a BLIP captioning
+    model to auto-generate natural-language descriptions of the segmented land composition.
+    Trained with a combined Dice + BCE loss and mixed-precision for stability and speed.</p>
+    <span class="tags">PyTorch · segmentation-models-pytorch · Hugging Face (BLIP) · OpenCV — Data &amp; ML</span>
+  </div>
+
+  <div class="proj">
+    <h3>EDA in a Pharma Company</h3>
+    <p>Exploratory data analytics for a pharmaceutical company, surfacing key insights used
+    to boost sales figures, along with growth trajectories and possible vulnerabilities in
+    the business.</p>
+    <span class="tags">Python · Pandas · NumPy — Programming / Data &amp; ML</span>
+  </div>
+
+  <div class="proj">
+    <h3>Re-store</h3>
+    <p>A small e-commerce platform built to form a local community around the re-use and
+    sale of surplus goods.</p>
+    <span class="tags">React · Vite · Tailwind — Web &amp; Backend</span>
+  </div>
+
+  <div class="proj" style="border-bottom:none;">
+    <h3>Repo Reviewer</h3>
+    <p>Node.js/Express web app that analyzes any public GitHub repository using Google's
+    Gemini API, generating an AI summary, tech-stack breakdown, and actionable code
+    improvement suggestions with full file diffs. Integrates with the GitHub Contents API to
+    auto-create branches and open pull requests for selected changes.</p>
+    <span class="tags">Node.js · Express · Gemini API · GitHub API — Web &amp; Backend / Data &amp; ML / Databases &amp; Tools</span>
+  </div>
+</main>
+
+<script src="assets/js/panel.js"></script>
+</body>
+</html>
