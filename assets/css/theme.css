@@ -85,23 +85,16 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 }
 #nav-list a:hover, #nav-list a:focus-visible{ color:var(--accent); }
 
-/* ---------- Theme toggle ---------- */
-#theme-toggle{
-  position:fixed; top:20px; left:20px; z-index:200;
+/* ---------- Theme toggle + sound toggle (stacked, share one pill style) ---------- */
+#theme-toggle, #sound-toggle{
+  position:fixed; left:20px; z-index:200;
   font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase;
   padding:11px 16px; border-radius:22px;
   border:1px solid var(--rail); background:var(--bg-raised); color:var(--ink-dim);
 }
-#theme-toggle:hover{ color:var(--accent); border-color:var(--accent); }
-
-/* ---------- Sound toggle (stacked below the theme toggle) ---------- */
-#sound-toggle{
-  position:fixed; top:72px; left:20px; z-index:200;
-  font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase;
-  padding:11px 16px; border-radius:22px;
-  border:1px solid var(--rail); background:var(--bg-raised); color:var(--ink-dim);
-}
-#sound-toggle:hover{ color:var(--accent); border-color:var(--accent); }
+#theme-toggle:hover, #sound-toggle:hover{ color:var(--accent); border-color:var(--accent); }
+#theme-toggle{ top:20px; }
+#sound-toggle{ top:72px; }
 
 /* ---------- Fallback card (shown only when WebGL/Three.js unavailable) ---------- */
 #fallback{
@@ -131,8 +124,11 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
   .hero-overlay{ top:36px; }
   .hero-overlay h1{ font-size:clamp(26px,8vw,40px); }
   .tagline{ font-size:13px; padding:0 8px; }
-  #theme-toggle{ top:auto; bottom:20px; left:20px; font-size:11px; padding:9px 12px; }
-  #sound-toggle{ top:auto; bottom:68px; left:20px; font-size:11px; padding:9px 12px; }
+  #theme-toggle, #sound-toggle{ top:auto; left:20px; font-size:11px; padding:9px 12px; }
+  #theme-toggle{ bottom:20px; }
+  #sound-toggle{ bottom:68px; }
   #corner-nav{ top:16px; right:16px; }
-  .scene-hint{ bottom:84px; }
+  /* Cleared above the stacked theme/sound toggles (bottom:68px + ~31px tall), which
+     otherwise overlap this centered hint text on narrow phones. */
+  .scene-hint{ bottom:116px; }
 }

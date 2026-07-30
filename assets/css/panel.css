@@ -4,12 +4,12 @@
 
 .panel-page{ min-height:100vh; position:relative; overflow-x:hidden; }
 
+/* A flat gradient approximation of the desk behind it, not a literal blurred photo. */
 .panel-backdrop{
   position:fixed; inset:0; z-index:0;
   background:
     radial-gradient(ellipse 900px 600px at 75% 10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
     var(--bg);
-  filter: blur(0px); /* backdrop is a flat gradient approximation, not a literal blurred photo */
 }
 
 .panel-close{
@@ -48,6 +48,7 @@
 
 .card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px; }
 .card-grid--three{ grid-template-columns:1fr 1fr 1fr; }
+.card-grid--single{ grid-template-columns:1fr; }
 .card{
   border:1px solid var(--rail); background:var(--bg-raised); padding:20px;
   border-radius:4px;
@@ -55,8 +56,19 @@
 .card h3{ font-family:var(--font-display); font-size:18px; margin-bottom:8px; color:var(--ink); }
 .card .tags{ font-family:var(--font-mono); font-size:12px; color:var(--ink-dim); margin-top:10px; display:block; }
 
+/* The four skill-tag colors (see DESIGN.md), applied as classes rather than inline
+   styles so a Cyberpunk switch only ever has to touch the token, not per-page markup. */
+.card h3.tag-amber{ color:var(--thread-amber); }
+.card h3.tag-blue{ color:var(--thread-blue); }
+.card h3.tag-violet{ color:var(--thread-violet); }
+.card h3.tag-teal{ color:var(--thread-teal); }
+
 .fact-row{ display:flex; flex-direction:column; gap:6px; padding:16px 0; border-bottom:1px solid var(--rail); }
-.fact-row strong{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+/* Direct-child selector: a fact-row's value (the second column) may itself contain a
+   <strong> for emphasis (see about.html's role title) and must not inherit the label's
+   mono/uppercase/accent treatment meant only for the row's leading date/label. */
+.fact-row > strong{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.fact-row .role{ font-family:var(--font-display); font-weight:600; color:var(--ink); }
 
 @media (max-width:720px){
   .card-grid{ grid-template-columns:1fr; }

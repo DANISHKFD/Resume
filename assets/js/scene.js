@@ -63,6 +63,12 @@
     : (document.documentElement.getAttribute('data-theme') || 'desk-lamp');
   document.documentElement.setAttribute('data-theme', currentTheme);
 
+  // The theme-toggle button's aria-pressed ships hard-coded "false" in the markup;
+  // sync it to a stored Cyberpunk preference here so assistive tech doesn't announce
+  // "not pressed" on a page that already loaded in Cyberpunk mode.
+  var initialThemeToggle = document.getElementById('theme-toggle');
+  if (initialThemeToggle) initialThemeToggle.setAttribute('aria-pressed', currentTheme === 'cyberpunk' ? 'true' : 'false');
+
   var scene, camera, renderer, deskGroup, lampLight, ambientLight, fillLight, lampBulbMat;
   var basecameraPos, targetParallax, currentParallax; // initialized in initScene() to ensure defined before animate()
   var clock = new THREE.Clock();
