@@ -11,6 +11,13 @@
   // opened/clicked latch stuck true with no navigation ever happening).
   var canAnimate = !reduceMotion && typeof gsap !== 'undefined';
 
+  // Same graceful-degrade pattern as canAnimate above: if the GLTFLoader CDN script
+  // failed, gltfLoader stays null and loadModel() below just logs and skips — the
+  // mug/plant/laptop/trophy groups stay registered as interactive but empty, which
+  // only matters if this specific CDN is unreachable (the corner nav still reaches
+  // every section regardless).
+  var gltfLoader = (typeof THREE !== 'undefined' && THREE.GLTFLoader) ? new THREE.GLTFLoader() : null;
+
   var sceneRoot = document.getElementById('scene-root');
   var fallback = document.getElementById('fallback');
   var canvas = document.getElementById('scene-canvas');
@@ -332,6 +339,78 @@
     try { window.localStorage.setItem('resumeSoundMuted', muted ? 'true' : 'false'); } catch (e) { /* storage unavailable */ }
   }
 
+  // ---------- Imported models (mug, plant, laptop, trophy) ----------
+  // These four objects use downloaded .glb models instead of hand-built primitive
+  // geometry (contrast the lamp/duck/pen/notebook/frame/figurine below, which stay
+  // procedural). Each source file arrives at its own arbitrary scale and pivot —
+  // fitModelToDesk() normalizes both so every model can be dropped onto the desk's
+  // y=0 surface (see buildLamp's own y=0 note) the same way a procedural group is.
+
+  function loadModel(url, onLoad) {
+    if (!gltfLoader) {
+      console.error('GLTFLoader unavailable — skipping model load for', url);
+      return;
+    }
+    gltfLoader.load(url, function (gltf) { onLoad(gltf.scene); }, undefined, function (err) {
+      console.error('Failed to load model', url, err);
+    });
+  }
+
+  // Rescales `model` uniformly so its size along the reference axis equals
+  // `opts.target`, then recenters it on x/z and drops it so its lowest point sits
+  // at local y=0 — the desk-surface baseline every procedural object is hand-placed
+  // against. opts.axis: 'y' (default, for height-defined objects) or 'maxXZ' (for
+  // footprint-defined objects like the laptop, whichever of x/z is wider).
+  function fitModelToDesk(model, opts) {
+    opts = opts || {};
+    model.updateMatrixWorld(true);
+    var box = new THREE.Box3().setFromObject(model);
+    var size = box.getSize(new THREE.Vector3());
+    var reference = opts.axis === 'maxXZ' ? Math.max(size.x, size.z) : size.y;
+    var scale = reference > 0 ? (opts.target || 1) / reference : 1;
+    model.scale.setScalar(scale);
+    model.updateMatrixWorld(true);
+    box.setFromObject(model);
+    var center = box.getCenter(new THREE.Vector3());
+    model.position.x -= center.x;
+    model.position.z -= center.z;
+    model.position.y -= box.min.y;
+    return model;
+  }
+
+  // Turns on shadows for an imported model (procedural objects don't cast/receive —
+  // see the shadowMap setup in initScene — but these four are the closest objects to
+  // the lamp and worth the cost) and returns its unique materials, so callers like
+  // the trophy's glint can animate every material a multi-material model actually has
+  // instead of just the one goldMat a hand-built mesh used to expose.
+  function prepareModel(model) {
+    var materials = [];
+    model.traverse(function (child) {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        if (child.material && materials.indexOf(child.material) === -1) materials.push(child.material);
+      }
+    });
+    return materials;
+  }
+
+  // A network-loaded model can pop in well after the rest of the desk has rendered;
+  // fading it in (skipped entirely under reduced motion) reads as arriving on
+  // purpose rather than a layout glitch.
+  function fadeModelIn(materials) {
+    if (!canAnimate) return;
+    materials.forEach(function (mat) {
+      var target = mat.opacity;
+      mat.transparent = true;
+      mat.opacity = 0;
+      gsap.to(mat, {
+        opacity: target, duration: 0.35, ease: 'power1.out',
+        onComplete: function () { mat.transparent = false; }
+      });
+    });
+  }
+
   var lampOn = true;
 
   function buildLamp() {
@@ -412,32 +491,24 @@
   function buildPlant() {
     var group = new THREE.Group();
     group.position.set(-3.4, 0, 0.6); // y=0 is the desk's top surface, see buildLamp
+    var plantModel = null; // set once assets/models/house-plant.glb finishes loading
 
-    var potMat = new THREE.MeshStandardMaterial({ color: 0x3a2a20, roughness: 0.8 });
-    var pot = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.28, 0.5, 16), potMat);
-    pot.position.y = 0.25;
-    group.add(pot);
-
-    var leafMat = new THREE.MeshStandardMaterial({ color: 0x2f6b3a, roughness: 0.6, side: THREE.DoubleSide });
-    var leaves = new THREE.Group();
-    leaves.position.y = 0.55;
-    for (var i = 0; i < 6; i++) {
-      var leaf = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.9, 6), leafMat);
-      var angle = (i / 6) * Math.PI * 2;
-      leaf.position.set(Math.cos(angle) * 0.12, 0.45, Math.sin(angle) * 0.12);
-      leaf.rotation.z = Math.cos(angle) * 0.35;
-      leaf.rotation.x = Math.sin(angle) * 0.35;
-      leaves.add(leaf);
-    }
-    group.add(leaves);
     deskGroup.add(group);
+
+    loadModel('assets/models/house-plant.glb', function (model) {
+      fitModelToDesk(model, { axis: 'y', target: 1.3 });
+      var materials = prepareModel(model);
+      group.add(model);
+      fadeModelIn(materials);
+      plantModel = model;
+    });
 
     registerInteractive(group, group, {
       onClick: function () {
         playPaper();
-        if (!canAnimate) return;
-        gsap.to(leaves.rotation, {
-          z: leaves.rotation.z + 0.18, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut'
+        if (!canAnimate || !plantModel) return;
+        gsap.to(plantModel.rotation, {
+          z: plantModel.rotation.z + 0.18, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut'
         });
       }
     });
@@ -537,55 +608,46 @@
 
   function buildLaptop() {
     var group = new THREE.Group();
-    group.position.set(0, -0.15, -0.4);
+    group.position.set(0, 0, -0.4); // y=0 is the desk's top surface, see buildLamp
     var opened = false;
-
-    var baseMat = new THREE.MeshStandardMaterial({ color: 0x4a4d52, roughness: 0.4, metalness: 0.5 });
-    var base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 1.0), baseMat);
-    // group.position.y is -0.15 (the shared desk-surface baseline); +0.18 here
-    // puts the base's bottom face flush with the desk's actual top surface (y=0)
-    // instead of half-submerged in it.
-    base.position.y = 0.18;
-    group.add(base);
-
-    var hinge = new THREE.Group();
-    hinge.position.set(0, 0.21, -0.48); // raised to match base's new resting height
-    group.add(hinge);
-
-    var screenMat = new THREE.MeshStandardMaterial({ color: 0x3a3d42, roughness: 0.4, metalness: 0.5 });
-    var screen = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 0.05), screenMat);
-    screen.position.set(0, 0.48, -0.025);
-    hinge.add(screen);
-
-    var glowMat = new THREE.MeshStandardMaterial({
-      color: 0x0a1622, emissive: 0x3fa7ff, emissiveIntensity: 0.0
-    });
-    var glow = new THREE.Mesh(new THREE.PlaneGeometry(1.32, 0.78), glowMat);
-    glow.position.set(0, 0.48, 0.005);
-    hinge.add(glow);
-
-    hinge.rotation.x = -0.35; // mostly-closed idle state
+    var laptopModel = null;
+    var restY = 0; // set once the model loads and fitModelToDesk settles its resting height
 
     deskGroup.add(group);
 
+    group.rotation.y = 106 * Math.PI / 180;
+
+    loadModel('assets/models/laptop.glb', function (model) {
+      fitModelToDesk(model, { axis: 'maxXZ', target: 1.5 });
+      restY = model.position.y;
+      var materials = prepareModel(model);
+      group.add(model);
+      fadeModelIn(materials);
+      laptopModel = model;
+    });
+
+    // The model is a single static pose (no hinge rig to animate open, unlike the
+    // procedural lid this replaced), so the click feedback is a quick lift-and-settle
+    // rather than the lid actually opening.
     function openAndGo() {
       if (opened) return;
       opened = true;
       playClick();
-      if (!canAnimate) {
-        glowMat.emissiveIntensity = 1;
+      if (!canAnimate || !laptopModel) {
         navigateAfter('projects.html', 0);
         return;
       }
-      gsap.to(glowMat, { emissiveIntensity: 1, duration: 0.4, delay: 0.15 });
-      navigateAfter('projects.html', 650);
+      gsap.timeline()
+        .to(laptopModel.position, { y: restY + 0.15, duration: 0.12, ease: 'power1.out' })
+        .to(laptopModel.position, { y: restY, duration: 0.28, ease: 'bounce.out' });
+      navigateAfter('projects.html', 450);
     }
 
     registerInteractive(group, group, { onClick: openAndGo });
 
     resetters.push(function () {
       opened = false;
-      glowMat.emissiveIntensity = 0;
+      if (laptopModel) laptopModel.position.y = restY;
     });
 
     return group;
@@ -645,27 +707,18 @@
 
   function buildMug() {
     var group = new THREE.Group();
-    group.position.set(-0.9, 0, 1.5); // y=0 is the desk's top surface, see buildLamp
+    group.position.set(-0.4, 0, 1.5); // y=0 is the desk's top surface, see buildLamp
     var clicked = false;
 
-    var mugMat = new THREE.MeshStandardMaterial({ color: 0xe7e2d8, roughness: 0.5 });
-    var cup = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.19, 0.4, 20), mugMat);
-    cup.position.y = 0.2;
-    group.add(cup);
-
-    var handle = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 8, 20, Math.PI), mugMat);
-    // A torus's hole-axis defaults to Z (its ring lies flat in the XY plane, facing
-    // the camera edge-on). rotation.z alone just spins that flat ring in place —
-    // it never turns the loop to face outward, so the handle rendered as a barely
-    // visible sliver. rotation.y turns the hole-axis to X, standing the loop up so
-    // it actually reads as a handle protruding from the cup's side.
-    handle.rotation.z = Math.PI / 2;
-    handle.rotation.y = Math.PI / 2;
-    handle.position.set(0.24, 0.2, 0);
-    group.add(handle);
+    loadModel('assets/models/coffee-cup.glb', function (model) {
+      fitModelToDesk(model, { axis: 'y', target: 0.65 });
+      var materials = prepareModel(model);
+      group.add(model);
+      fadeModelIn(materials);
+    });
 
     var steamGroup = new THREE.Group();
-    steamGroup.position.set(0, 0.42, 0);
+    steamGroup.position.set(0, 0.65, 0);
     group.add(steamGroup);
     var steamMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
     var steamPuffs = [];
@@ -711,26 +764,16 @@
     var group = new THREE.Group();
     group.position.set(-2.6, 0, -1.1); // y=0 is the desk's top surface, see buildLamp
     var clicked = false;
+    var trophyMaterials = []; // populated once assets/models/trophy.glb loads (gold cup + dark base, unlike the single goldMat this replaced)
 
-    var goldMat = new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.3, metalness: 0.85 });
-    var base = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.12, 16), goldMat);
-    base.position.y = 0.06;
-    group.add(base);
+    group.rotation.y = -Math.PI / 2;
 
-    var stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.3, 12), goldMat);
-    stem.position.y = 0.27;
-    group.add(stem);
-
-    var cup = new THREE.Mesh(new THREE.SphereGeometry(0.24, 20, 16, 0, Math.PI * 2, 0, Math.PI * 0.65), goldMat);
-    cup.position.y = 0.55;
-    group.add(cup);
-
-    [1, -1].forEach(function (s) {
-      var handle = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 8, 16, Math.PI), goldMat);
-      handle.rotation.y = Math.PI / 2;
-      handle.rotation.z = Math.PI / 2 * s;
-      handle.position.set(0.22 * s, 0.55, 0);
-      group.add(handle);
+    loadModel('assets/models/trophy.glb', function (model) {
+      fitModelToDesk(model, { axis: 'y', target: 0.75 });
+      var materials = prepareModel(model);
+      group.add(model);
+      fadeModelIn(materials);
+      trophyMaterials = materials;
     });
 
     deskGroup.add(group);
@@ -740,10 +783,16 @@
       clicked = true;
       playChime();
       if (!canAnimate) {
+        trophyMaterials.forEach(function (mat) { mat.emissiveIntensity = 1; });
         navigateAfter('accomplishments.html', 0);
         return;
       }
-      gsap.to(goldMat, { emissive: new THREE.Color(0xffe9a8), emissiveIntensity: 0.8, duration: 0.25, yoyo: true, repeat: 3 });
+      trophyMaterials.forEach(function (mat) {
+        // Tween the Color's own channels, not the `emissive` property itself —
+        // gsap only interpolates plain numeric properties.
+        gsap.to(mat.emissive, { r: 1, g: 0.91, b: 0.66, duration: 0.25, yoyo: true, repeat: 3 });
+        gsap.to(mat, { emissiveIntensity: 0.8, duration: 0.25, yoyo: true, repeat: 3 });
+      });
       navigateAfter('accomplishments.html', 550);
     }
 
@@ -751,8 +800,10 @@
 
     resetters.push(function () {
       clicked = false;
-      goldMat.emissive.set(0x000000);
-      goldMat.emissiveIntensity = 1;
+      trophyMaterials.forEach(function (mat) {
+        mat.emissive.set(0x000000);
+        mat.emissiveIntensity = 1;
+      });
     });
 
     return group;
