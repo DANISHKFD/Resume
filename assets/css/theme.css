@@ -96,6 +96,21 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 #theme-toggle{ top:20px; }
 #sound-toggle{ top:72px; }
 
+/* ---------- Cyberpunk-only links (bottom of index.html, hidden in Desk Lamp) ---------- */
+#cyber-links{
+  display:none; position:fixed; bottom:24px; left:0; right:0; z-index:200;
+  justify-content:center; gap:14px; pointer-events:none;
+}
+:root[data-theme="cyberpunk"] #cyber-links{ display:flex; }
+:root[data-theme="cyberpunk"] .scene-hint{ bottom:84px; }
+.cyber-link{
+  pointer-events:auto;
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase;
+  padding:11px 18px; border-radius:22px;
+  border:1px solid var(--accent); background:var(--bg-raised); color:var(--accent);
+}
+.cyber-link:hover{ background:var(--accent); color:var(--accent-ink); }
+
 /* ---------- Fallback card (shown only when WebGL/Three.js unavailable) ---------- */
 #fallback{
   min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -131,4 +146,8 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
   /* Cleared above the stacked theme/sound toggles (bottom:68px + ~31px tall), which
      otherwise overlap this centered hint text on narrow phones. */
   .scene-hint{ bottom:116px; }
+  /* Theme/sound toggles own the bottom-left corner here, so the links stack bottom-right. */
+  #cyber-links{ left:auto; right:16px; bottom:20px; flex-direction:column; align-items:flex-end; gap:10px; }
+  .cyber-link{ font-size:11px; padding:9px 12px; }
+  :root[data-theme="cyberpunk"] .scene-hint{ bottom:116px; }
 }
